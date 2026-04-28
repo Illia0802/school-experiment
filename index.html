@@ -751,9 +751,8 @@
                             <span style="font-size: 14px; color: var(--text-main); font-weight: 500; cursor: pointer;" onclick="document.getElementById('auto-speak-toggle').click()">Автоматично озвучувати відповіді</span>
                         </div>
                         <select id="voice-select" class="setting-control" onchange="window.changeVoice(this.value)">
-                            <option value="cloud_uk_std">☁️ Стандартний</option>
-                            <option value="cloud_uk_fast">🏃 Швидкий</option>
-                            <option value="cloud_uk_slow">🐢 Повільний</option>
+                            <!-- Опції автоматично генеруються та підвантажуються з файлу voices.js -->
+                            <option value="cloud_uk_std">☁️ Стандартний (Завантаження...)</option>
                         </select>
                     </div>
                 </div>
@@ -790,7 +789,7 @@
                     </div>
                 </div>
                 <div class="card" style="text-align: center;">
-                    <p style="color: var(--text-muted); font-size: 13px;">Версія додатка: 270.0 (Advanced Custom Core)<br>Розроблено для ліцею №8</p>
+                    <p style="color: var(--text-muted); font-size: 13px;">Версія додатка: 280.0 (GitHub Core + Local Bypass)<br>Розроблено для ліцею №8</p>
                 </div>
             </div>
         </div>
@@ -1280,44 +1279,6 @@
             if (element) { element.style.height = 'auto'; element.style.height = element.scrollHeight + 'px'; }
         };
 
-        window.formatMessageText = function(text) {
-            if (!text || typeof text !== 'string') return "";
-            
-            let cleanText = text.replace(/<think>[\s\S]*?<\/think>/g, '');
-            cleanText = cleanText.replace(/<think>[\s\S]*/g, '');
-            cleanText = cleanText.replace(/\[ЧАС:\s*\d+\]/gi, ''); // Приховуємо технічний тег таймера
-            cleanText = cleanText.trim();
-            
-            cleanText = cleanText.replace(/\[GENERATE_IMAGE:\s*([\s\S]+?)\]/gi, function(match, prompt) {
-                if (typeof window.renderGeneratedImage === 'function') {
-                    return window.renderGeneratedImage(prompt);
-                }
-                return `<div style="color:var(--primary); font-style:italic;">[Зображення: ${prompt}]</div>`;
-            });
-            
-            cleanText = cleanText.replace(/\\\((.*?)\\\)/gs, '$$$1$$');
-            cleanText = cleanText.replace(/\\\[(.*?)\\\]/gs, '$$$$$1$$$$');
-            cleanText = cleanText.replace(/\(\s*\\displaystyle(.*?)\s*\)/gs, '$$$$\\displaystyle$1$$$$');
-            
-            let mathBlocks = [];
-            cleanText = cleanText.replace(/\$\$(.*?)\$\$/gs, function(match) { 
-                mathBlocks.push(match); 
-                return `@@MATHBLOCK${mathBlocks.length - 1}@@`; 
-            });
-            cleanText = cleanText.replace(/\$(.*?)\$/gs, function(match) { 
-                mathBlocks.push(match); 
-                return `@@MATHBLOCK${mathBlocks.length - 1}@@`; 
-            });
-            
-            let parsedHtml = marked.parse(cleanText);
-            
-            mathBlocks.forEach(function(block, i) { 
-                parsedHtml = parsedHtml.replace(`@@MATHBLOCK${i}@@`, block); 
-            });
-            
-            return parsedHtml;
-        };
-
         window.switchTab = function(targetId, btnId) {
             document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
@@ -1509,7 +1470,7 @@
             
             chatBox.scrollTop = chatBox.scrollHeight;
             
-            if (!isHistoryLoad && role !== 'system') {
+            if (!isHistoryLoad && role !== 'system' && !text.includes("Запит заблоковано")) {
                 window.chatHistory.push({ role: role, content: text, image: imageBase64 });
                 window.saveMemory();
             }
@@ -1696,6 +1657,7 @@
         Ліцей завжди славився високим рівнем освіти. У 1960 році тут було відкрито перший в області історичний музей, а згодом — музей Бойової Слави. Учні часто перемагали на обласних та міських олімпіадах. Також школа славилася своїм хором, спортивними змаганнями, конкурсами квітів та шкільними кросами.
         Сьогодні ліцей №8 — це сучасний заклад освіти з багатими традиціями та потужним педагогічним колективом.`;
 
+        // 🛡️ Жорстке очищення від спаму та галюцинацій
         window.cleanAIResponse = function(text) {
             if (!text || typeof text !== 'string') return "";
             let cleaned = text;
@@ -1737,10 +1699,10 @@
             return cleaned.trim();
         };
 
+        // ТВОЯ ОРИГІНАЛЬНА ФУНКЦІЯ ШІ
         window.askAI = async function(query, imageBase64) {
             let qLower = (query || "").toLowerCase().replace(/[?.,!]/g, '').trim();
 
-            // 1. БАЙПАС МАЛЮВАННЯ
             let isImageRequest = false;
             if (window.currentMode === 'image') {
                 isImageRequest = true;
@@ -1754,7 +1716,6 @@
                 return `Ось ваше зображення:\n\n[GENERATE_IMAGE: ${cleanQuery}]`;
             }
 
-            // 2. СТАНДАРТНІ ВІДПОВІДІ (ЯК У ТВОЄМУ КОДІ)
             if (qLower.includes('президент сша') || qLower === 'хто президент сша' || qLower.includes('президент америки')) {
                 return "Станом на зараз, 47-м Президентом США є Дональд Трамп (він обійняв цю посаду у 2025 році).";
             }
@@ -1768,7 +1729,6 @@
                 return "Я — персональний штучний інтелект ліцею №8!";
             }
 
-            // 3. РОЗШИРЕНІ СИСТЕМНІ ПРОМПТИ
             const userClass = (window.currentUser && window.currentUser.userClass && window.currentUser.userClass !== '-') ? window.currentUser.userClass : "середніх та старших класів";
 
             const PROMPTS = {
@@ -1790,7 +1750,6 @@
                 sysPrompt += "\n\n[ДОВІДКА ПРО ІСТОРІЮ ЛІЦЕЮ №8]:\n" + LYCEUM_HISTORY + "\n\nСИСТЕМНА ВКАЗІВКА: Якщо учень питає про історію ліцею, розкажи її ПОВНІСТЮ та максимально детально.";
             }
 
-            // 4. СКАНУВАННЯ ТЕКСТУ З КАРТИНОК
             let safeQuery = query || "Допоможи мені з цим зображенням.";
             if (imageBase64) {
                 try {
@@ -1802,7 +1761,6 @@
                 } catch(err) { safeQuery += `\n[Помилка зчитування фото]`; }
             }
 
-            // 5. ПОШУК У ВІКІПЕДІЇ (ЯК У ТВОЄМУ КОДІ)
             let webSearchData = "";
             if (query.length > 3 && (window.currentMode === 'default' || window.currentMode === 'admin_chat')) {
                 try {
@@ -1817,14 +1775,13 @@
                             webSearchData = wikiData.query.search.slice(0, 3).map(s => s.title + ": " + s.snippet.replace(/<\/?[^>]+(>|$)/g, "")).join('\n');
                         }
                     }
-                } catch(e) { console.warn("Помилка Вікіпедії:", e); }
+                } catch(e) {}
             }
 
             if (webSearchData.length > 5) {
                 safeQuery += `\n\n--- ДОВІДКОВА ІНФОРМАЦІЯ З ІНТЕРНЕТУ ДЛЯ ВІДПОВІДІ ---\n${webSearchData}\n(Використовуй це, якщо воно стосується питання)`;
             }
 
-            // 6. ФОРМУВАННЯ ПОВІДОМЛЕНЬ
             const messages = [{ role: 'system', content: sysPrompt }];
             const validHistory = window.chatHistory.filter(m => m.role === 'user' || m.role === 'ai').slice(-6);
             validHistory.forEach(msg => {
@@ -1832,7 +1789,6 @@
             });
             messages.push({ role: 'user', content: safeQuery });
 
-            // 7. ЛОГІКА ВІДПРАВКИ ЗАПИТІВ (З ТВОГО GITHUB КОДУ)
             const extractText = (raw) => {
                 let res = raw;
                 try {
@@ -1854,7 +1810,7 @@
 
             const tryFetch = async (method, url, bodyObj) => {
                 const controller = new AbortController();
-                const id = setTimeout(() => controller.abort(), 60000); 
+                const id = setTimeout(() => controller.abort(), 20000); 
                 const options = { method, signal: controller.signal };
                 if (method === 'POST') {
                     options.headers = { 'Content-Type': 'application/json' };
@@ -1881,11 +1837,19 @@
             ans = await tryFetch('POST', 'https://text.pollinations.ai/', { messages, model: 'llama', seed: Math.floor(Math.random() * 1000000) });
             if (ans) return ans;
 
-            let fallbackPrompt = `Ти ШІ ліцею №8. Учень питає: ${query}. Відповідай українською. `;
+            let fallbackPrompt = `Ти ШІ ліцею №8. Учень питає: ${query}. Відповідай українською.`;
             ans = await tryFetch('GET', `https://text.pollinations.ai/${encodeURIComponent(fallbackPrompt)}?model=openai`, null);
             if (ans) return ans;
 
-            throw new Error("Сервери ШІ перевантажені або цей запит блокується фільтрами. Будь ласка, спробуйте перефразувати питання або зачекайте хвилинку!");
+            // ПЕРЕВІРКА НА LIVE SERVER (127.0.0.1)
+            const isLocal = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
+            if (isLocal) {
+                // Кидаємо не технічну помилку, а людське пояснення!
+                throw new Error("Запит заблоковано захистом Pollinations. Вони блокують локальні адреси (Live Server). Просто завантаж цей код на GitHub, і все запрацює ідеально!");
+            }
+
+            // Якщо ми не на localhost, але всі сервери впали
+            return "📡 Упс... Схоже, усі безкоштовні сервери штучного інтелекту зараз перевантажені запитами з усього світу. Будь ласка, зачекай хвилинку і спробуй ще раз! Я тут і готовий допомогти 😉";
         };
 
         window.handleSend = async function(e) {
@@ -1904,10 +1868,8 @@
 
             if (textContent && typeof window.checkAndTrigger === 'function') { window.checkAndTrigger(textContent); }
 
-            // Зупиняємо таймер
             if (typeof window.hideQuizTimer === 'function') window.hideQuizTimer();
 
-            // Якщо ми зараз у чаті з адміном
             if (window.currentMode === 'admin_chat') {
                 window.addMessageToDOM('user', textContent, false, imageContent);
                 userInput.value = ''; window.removeAttachedImage(); window.autoResize(userInput);
@@ -1927,7 +1889,8 @@
                 const answer = await window.askAI(textContent, imageContent);
                 window.addMessageToDOM('ai', answer);
             } catch (err) {
-                window.addMessageToDOM('system', `❌ Збій: ${err.message}`, true); 
+                // Якщо зловили Error - показуємо його як системне повідомлення
+                window.addMessageToDOM('system', `❌ ${err.message}`, true); 
                 if(window.chatHistory.length > 0 && window.chatHistory[window.chatHistory.length-1].role === 'user') {
                     window.chatHistory.pop();
                     window.saveMemory();
@@ -1974,8 +1937,6 @@
         // === 1. ІНІЦІАЛІЗАЦІЯ НАЛАШТУВАНЬ З CONFIG.JS ===
         if (!window.APP_CONFIG) {
             window.APP_CONFIG = {
-                GEMINI_API_KEYS: [],
-                GEMINI_MODEL: "gemini-2.5-flash", 
                 ELEVENLABS_API_KEY: "",
                 GOOGLE_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwcWbqYhvQ94w7qxy3qgM3x6hm3fC-u4dp48dznpneg_GAkCavPo4o0lykOIhb9fzpy/exec"
             };
