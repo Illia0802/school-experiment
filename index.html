@@ -789,7 +789,7 @@
                     </div>
                 </div>
                 <div class="card" style="text-align: center;">
-                    <p style="color: var(--text-muted); font-size: 13px;">Версія додатка: 280.0 (GitHub Core + Local Bypass)<br>Розроблено для ліцею №8</p>
+                    <p style="color: var(--text-muted); font-size: 13px;">Версія додатка: 281.0 (Fixed Voices Script)<br>Розроблено для ліцею №8</p>
                 </div>
             </div>
         </div>
@@ -1277,6 +1277,53 @@
 
         window.autoResize = function(element) {
             if (element) { element.style.height = 'auto'; element.style.height = element.scrollHeight + 'px'; }
+        };
+
+        window.formatMessageText = function(text) {
+            if (!text || typeof text !== 'string') return "";
+            
+            let cleanText = text.replace(/<think>[\s\S]*?<\/think>/g, '');
+            cleanText = cleanText.replace(/<think>[\s\S]*/g, '');
+            cleanText = cleanText.replace(/\[ЧАС:\s*\d+\]/gi, ''); // Приховуємо технічний тег таймера
+            cleanText = cleanText.trim();
+            
+            cleanText = cleanText.replace(/\[GENERATE_IMAGE:\s*([\s\S]+?)\]/gi, function(match, prompt) {
+                if (typeof window.renderGeneratedImage === 'function') {
+                    return window.renderGeneratedImage(prompt);
+                }
+                return `<div style="color:var(--primary); font-style:italic;">[Зображення: ${prompt}]</div>`;
+            });
+            
+            cleanText = cleanText.replace(/\\\((.*?)\\\)/gs, '$$$1$$');
+            cleanText = cleanText.replace(/\\\[(.*?)\\\]/gs, '$$$$$1$$$$');
+            cleanText = cleanText.replace(/\(\s*\\displaystyle(.*?)\s*\)/gs, '$$$$\\displaystyle$1$$$$');
+            
+            let mathBlocks = [];
+            cleanText = cleanText.replace(/\$\$(.*?)\$\$/gs, function(match) { 
+                mathBlocks.push(match); 
+                return `@@MATHBLOCK${mathBlocks.length - 1}@@`; 
+            });
+            cleanText = cleanText.replace(/\$(.*?)\$/gs, function(match) { 
+                mathBlocks.push(match); 
+                return `@@MATHBLOCK${mathBlocks.length - 1}@@`; 
+            });
+            
+            let parsedHtml = marked.parse(cleanText);
+            
+            mathBlocks.forEach(function(block, i) { 
+                parsedHtml = parsedHtml.replace(`@@MATHBLOCK${i}@@`, block); 
+            });
+            
+            return parsedHtml;
+        };
+
+        window.cleanAIResponse = function(text) {
+            if (!text || typeof text !== 'string') return "";
+            let cleanedText = text.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+            cleanedText = cleanedText.replace(/https?:\/\/(www\.)?liceum8\.org(\S*)/gi, 'https://8.lic.zhitomir.ua$2');
+            cleanedText = cleanedText.replace(/liceum8\.org/gi, '8.lic.zhitomir.ua');
+            cleanedText = cleanedText.replace(/https?:\/\/(www\.)?lyceum8\.zt\.ua(\S*)/gi, 'https://8.lic.zhitomir.ua$2');
+            return cleanedText;
         };
 
         window.switchTab = function(targetId, btnId) {
@@ -1937,6 +1984,8 @@
         // === 1. ІНІЦІАЛІЗАЦІЯ НАЛАШТУВАНЬ З CONFIG.JS ===
         if (!window.APP_CONFIG) {
             window.APP_CONFIG = {
+                GEMINI_API_KEYS: [],
+                GEMINI_MODEL: "gemini-2.5-flash", 
                 ELEVENLABS_API_KEY: "",
                 GOOGLE_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwcWbqYhvQ94w7qxy3qgM3x6hm3fC-u4dp48dznpneg_GAkCavPo4o0lykOIhb9fzpy/exec"
             };
