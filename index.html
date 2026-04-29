@@ -664,7 +664,8 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 5"></polyline></svg>
                     </button>
                     <div class="header-info">
-                        <h1 style="background: var(--glass); padding: 8px 16px; border-radius: 12px; backdrop-filter: blur(12px); border: 1px solid var(--border);">📅 Розклад ліцею №8</h1>
+                        <h1 style="background: var(--glass); padding: 8px 16px; border-radius: 12px; backdrop-filter: blur(12px); border: 1px solid var(--border); margin-bottom: 2px;">📅 Розклад ліцею №8</h1>
+                        <div style="font-size: 10px; color: var(--primary); font-weight: 600; padding-left: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Розробив учень 9-А класу Меліхов Данило</div>
                     </div>
                 </div>
             </header>
@@ -789,7 +790,7 @@
                     </div>
                 </div>
                 <div class="card" style="text-align: center;">
-                    <p style="color: var(--text-muted); font-size: 13px;">Версія додатка: 281.0 (Fixed Voices Script)<br>Розроблено для ліцею №8</p>
+                    <p style="color: var(--text-muted); font-size: 13px;">Версія додатка: 501.0 (Syntax Fixed)<br>Розроблено для ліцею №8</p>
                 </div>
             </div>
         </div>
@@ -1116,6 +1117,22 @@
             document.getElementById('permissions-modal-overlay').style.display = 'flex';
         };
 
+        window.toggleUserPermission = function(email, key) {
+            const u = window.appUsers[email];
+            if(!u) return;
+            if(!u.permissions) u.permissions = {};
+            
+            u.permissions[key] = !u.permissions[key];
+            window.safeSetLocal('appUsers', JSON.stringify(window.appUsers));
+            window.openPermissionsModal(email);
+            
+            if (typeof firestoreDB !== 'undefined' && typeof firebaseAppId !== 'undefined' && firestoreDB !== null) {
+                import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js").then(mod => {
+                    mod.setDoc(mod.doc(firestoreDB, 'artifacts', firebaseAppId, 'public', 'data', 'appUsers', email), u, {merge:true});
+                }).catch(e => console.error(e));
+            }
+        };
+
         window.applyCustomBg = function() {
             const input = document.getElementById('custom-bg-input');
             if(input && input.value) {
@@ -1181,14 +1198,11 @@
                     window.setBg(savedBg);
                 }
 
-                // Завантаження рекорду вікторини
                 const savedHighScore = localStorage.getItem('appQuizHighScore') || '0';
                 const hsEl = document.getElementById('quiz-high-score');
                 if (hsEl) hsEl.innerText = savedHighScore;
 
-            } catch (e) {
-                console.warn("Помилка завантаження налаштувань:", e);
-            }
+            } catch (e) {}
         };
 
         window.toggleAutoSpeak = function(checked) {
@@ -1279,12 +1293,54 @@
             if (element) { element.style.height = 'auto'; element.style.height = element.scrollHeight + 'px'; }
         };
 
+        // 🛡️ Очищення від спаму
+        window.cleanAIResponse = function(text) {
+            if (!text || typeof text !== 'string') return "";
+            let cleaned = text;
+            
+            cleaned = cleaned.replace(/⚠️\s*\*\*IMPORTANT NOTICE\*\*[\s\S]*?latest models\./gi, '');
+            cleaned = cleaned.replace(/\*?\*?Note:\s*Anonymous requests[\s\S]*?work normally\.?\*?\*?/gi, '');
+            cleaned = cleaned.replace(/Please migrate to our new service at https:\/\/enter\.pollinations\.ai.*/gi, '');
+            cleaned = cleaned.replace(/The Pollinations legacy text API is being deprecated.*/gi, '');
+            cleaned = cleaned.replace(/Need proxies cheaper than the market\??[\s\S]*?op\.wtf/gi, '');
+            
+            const adMarkers = ["Support Pollinations.AI:", "🌸 Ad 🌸", "Powered by Pollinations.AI", "discord.gg", "op.wtf", "proxies cheaper", "IMPORTANT NOTICE"];
+            for (const marker of adMarkers) {
+                const index = cleaned.toLowerCase().indexOf(marker.toLowerCase());
+                if (index !== -1) {
+                    const hrIndex = cleaned.lastIndexOf('---', index);
+                    if (hrIndex !== -1 && (index - hrIndex) < 150) cleaned = cleaned.substring(0, hrIndex);
+                    else cleaned = cleaned.substring(0, index);
+                }
+            }
+            cleaned = cleaned.replace(/^[⚠️*\s]+/, '').trim();
+
+            cleaned = cleaned.replace(/https?:\/\/(www\.)?liceum8\.org(\S*)/gi, 'https://8.lic.zhitomir.ua$2');
+            cleaned = cleaned.replace(/liceum8\.org/gi, '8.lic.zhitomir.ua');
+            cleaned = cleaned.replace(/https?:\/\/(www\.)?lyceum8\.zt\.ua(\S*)/gi, 'https://8.lic.zhitomir.ua$2');
+            
+            cleaned = cleaned.replace(/ліжії/gi, 'ліцеї');
+            cleaned = cleaned.replace(/ліжію/gi, 'ліцею');
+            cleaned = cleaned.replace(/ліжія/gi, 'ліцей');
+            cleaned = cleaned.replace(/в ліжії/gi, 'у ліцеї');
+            cleaned = cleaned.replace(/у ліжії/gi, 'у ліцеї');
+            cleaned = cleaned.replace(/ліцея/gi, 'ліцею');
+            cleaned = cleaned.replace(/антиміністрування/gi, 'адміністрування');
+            cleaned = cleaned.replace(/Запоробійської держави/gi, 'США'); 
+            cleaned = cleaned.replace(/розумляч/gi, 'ШІ');
+            cleaned = cleaned.replace(/трусильник школи/gi, 'помічник ліцею');
+            cleaned = cleaned.replace(/трусильник/gi, 'помічник');
+            cleaned = cleaned.replace(/Чем вітатись/gi, 'Чим можу допомогти');
+            
+            return cleaned.trim();
+        };
+
         window.formatMessageText = function(text) {
             if (!text || typeof text !== 'string') return "";
             
             let cleanText = text.replace(/<think>[\s\S]*?<\/think>/g, '');
             cleanText = cleanText.replace(/<think>[\s\S]*/g, '');
-            cleanText = cleanText.replace(/\[ЧАС:\s*\d+\]/gi, ''); // Приховуємо технічний тег таймера
+            cleanText = cleanText.replace(/\[ЧАС:\s*\d+\]/gi, ''); 
             cleanText = cleanText.trim();
             
             cleanText = cleanText.replace(/\[GENERATE_IMAGE:\s*([\s\S]+?)\]/gi, function(match, prompt) {
@@ -1315,15 +1371,6 @@
             });
             
             return parsedHtml;
-        };
-
-        window.cleanAIResponse = function(text) {
-            if (!text || typeof text !== 'string') return "";
-            let cleanedText = text.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
-            cleanedText = cleanedText.replace(/https?:\/\/(www\.)?liceum8\.org(\S*)/gi, 'https://8.lic.zhitomir.ua$2');
-            cleanedText = cleanedText.replace(/liceum8\.org/gi, '8.lic.zhitomir.ua');
-            cleanedText = cleanedText.replace(/https?:\/\/(www\.)?lyceum8\.zt\.ua(\S*)/gi, 'https://8.lic.zhitomir.ua$2');
-            return cleanedText;
         };
 
         window.switchTab = function(targetId, btnId) {
@@ -1517,7 +1564,7 @@
             
             chatBox.scrollTop = chatBox.scrollHeight;
             
-            if (!isHistoryLoad && role !== 'system' && !text.includes("Запит заблоковано")) {
+            if (!isHistoryLoad && role !== 'system') {
                 window.chatHistory.push({ role: role, content: text, image: imageBase64 });
                 window.saveMemory();
             }
@@ -1693,10 +1740,6 @@
             }
         };
 
-        // ========================================================
-        // ГОЛОВНА ЛОГІКА ШІ ЗІ ВБУДОВАНИМИ ПАРАМЕТРАМИ ТВОГО GITHUB КОДУ
-        // ========================================================
-        
         const LYCEUM_HISTORY = `Ліцей №8 м. Житомира (раніше СШ №45) відкритий восени 1944 року після звільнення міста для дітей залізничників на вул. Леніна №81 (зараз це стара будівля). Першим директором була Уралова Анна Георгіївна. 
         У роки Другої світової війни в будівлі розташовувався військовий шпиталь. Пізніше школа була відбудована громадою. Учні та вчителі власноруч розчистили територію та висадили великий шкільний сад і березову алею. 
         У перші роки вчителі працювали у важких умовах: самі заготовляли дрова, а класи опалювалися буржуйками. Проте колектив був дуже дружним. У 1946 році відкрили 8 клас, створили шкільний драмгурток та комсомольську організацію. Зі 114 випускників перших років 108 здобули вищу освіту. 
@@ -1704,49 +1747,17 @@
         Ліцей завжди славився високим рівнем освіти. У 1960 році тут було відкрито перший в області історичний музей, а згодом — музей Бойової Слави. Учні часто перемагали на обласних та міських олімпіадах. Також школа славилася своїм хором, спортивними змаганнями, конкурсами квітів та шкільними кросами.
         Сьогодні ліцей №8 — це сучасний заклад освіти з багатими традиціями та потужним педагогічним колективом.`;
 
-        // 🛡️ Жорстке очищення від спаму та галюцинацій
-        window.cleanAIResponse = function(text) {
-            if (!text || typeof text !== 'string') return "";
-            let cleaned = text;
-            
-            cleaned = cleaned.replace(/⚠️\s*\*\*IMPORTANT NOTICE\*\*[\s\S]*?latest models\./gi, '');
-            cleaned = cleaned.replace(/\*?\*?Note:\s*Anonymous requests[\s\S]*?work normally\.?\*?\*?/gi, '');
-            cleaned = cleaned.replace(/Please migrate to our new service at https:\/\/enter\.pollinations\.ai.*/gi, '');
-            cleaned = cleaned.replace(/The Pollinations legacy text API is being deprecated.*/gi, '');
-            cleaned = cleaned.replace(/Need proxies cheaper than the market\??[\s\S]*?op\.wtf/gi, '');
-            
-            const adMarkers = ["Support Pollinations.AI:", "🌸 Ad 🌸", "Powered by Pollinations.AI", "discord.gg", "op.wtf", "proxies cheaper", "IMPORTANT NOTICE"];
-            for (const marker of adMarkers) {
-                const index = cleaned.toLowerCase().indexOf(marker.toLowerCase());
-                if (index !== -1) {
-                    const hrIndex = cleaned.lastIndexOf('---', index);
-                    if (hrIndex !== -1 && (index - hrIndex) < 150) cleaned = cleaned.substring(0, hrIndex);
-                    else cleaned = cleaned.substring(0, index);
-                }
-            }
-            cleaned = cleaned.replace(/^[⚠️*\s]+/, '').trim();
-
-            cleaned = cleaned.replace(/https?:\/\/(www\.)?liceum8\.org(\S*)/gi, 'https://8.lic.zhitomir.ua$2');
-            cleaned = cleaned.replace(/liceum8\.org/gi, '8.lic.zhitomir.ua');
-            cleaned = cleaned.replace(/https?:\/\/(www\.)?lyceum8\.zt\.ua(\S*)/gi, 'https://8.lic.zhitomir.ua$2');
-            
-            cleaned = cleaned.replace(/ліжії/gi, 'ліцеї');
-            cleaned = cleaned.replace(/ліжію/gi, 'ліцею');
-            cleaned = cleaned.replace(/ліжія/gi, 'ліцей');
-            cleaned = cleaned.replace(/в ліжії/gi, 'у ліцеї');
-            cleaned = cleaned.replace(/у ліжії/gi, 'у ліцеї');
-            cleaned = cleaned.replace(/ліцея/gi, 'ліцею');
-            cleaned = cleaned.replace(/антиміністрування/gi, 'адміністрування');
-            cleaned = cleaned.replace(/Запоробійської держави/gi, 'США'); 
-            cleaned = cleaned.replace(/розумляч/gi, 'ШІ');
-            cleaned = cleaned.replace(/трусильник школи/gi, 'помічник ліцею');
-            cleaned = cleaned.replace(/трусильник/gi, 'помічник');
-            cleaned = cleaned.replace(/Чем вітатись/gi, 'Чим можу допомогти');
-            
-            return cleaned.trim();
+        const SYSTEM_PROMPTS = {
+            'default': "Ти — привітний віртуальний помічник ліцею №8 (м. Житомир). Ти не маєш відношення до інших компаній. На питання 'Хто ти?' відповідай, що ти ШІ-помічник ліцею №8. На питання 'Хто тебе створив?' або 'Хто розробник?' ОБОВ'ЯЗКОВО відповідай: 'Питайте у Стельмаха Олександра з 8Б класу'. Офіційний сайт ліцею: [Сайт ліцею №8](https://8.lic.zhitomir.ua/) (ЗАВЖДИ використовуй цей Markdown-формат для посилання). Новини ліцею можна знайти на сайті: [Новини ліцею №8](https://8.lic.zhitomir.ua/novini/).",
+            'math': "Ти — досвідчений вчитель математики ліцею №8. На питання 'Хто тебе створив?' ОБОВ'ЯЗКОВО відповідай: 'Питайте у Стельмаха Олександра з 8Б класу'. Допомагай з алгеброю та геометрією. ПАМ'ЯТАЙ: ти не вирішуєш задачі за учнів, ти лише даєш підказки, формули та алгоритм розв'язання. ЗАВЖДИ використовуй символ долара для математики: $...$ для малих формул та $$...$$ для великих. НІКОЛИ не використовуй круглі чи квадратні дужки з бекслешами для математики. Офіційний сайт ліцею: [Сайт ліцею №8](https://8.lic.zhitomir.ua/).",
+            'ukr': "Ти — найкращий вчитель української мови та літератури ліцею №8. На питання 'Хто тебе створив?' ОБОВ'ЯЗКОВО відповідай: 'Питайте у Стельмаха Олександра з 8Б класу'. Допомагай писати твори, пояснюй правила граматики, роби синтаксичний розбір. Ти не пишеш твори чи вправи замість учня, а пояснюєш правила та даєш підказки. Офіційний сайт ліцею: [Сайт ліцею №8](https://8.lic.zhitomir.ua/).",
+            'translate': "Ти — професійний перекладач ліцею №8. На питання 'Хто тебе створив?' ОБОВ'ЯЗКОВО відповідай: 'Питайте у Стельмаха Олександра з 8Б класу'. Офіційний сайт ліцею: [Сайт ліцею №8](https://8.lic.zhitomir.ua/). Твоє завдання — перекладати тексти.",
+            'quiz': `Ти — харизматичний ведучий вікторини. СУВОРІ ПРАВИЛА:\n1. Задавай ТІЛЬКИ ОДНЕ питання за раз.\n2. Самостійно оціни складність і визнач чесний час на відповідь. В КІНЦІ повідомлення ОБОВ'ЯЗКОВО додай тег [ЧАС: X] (де X - секунди).\n3. Давай 4 варіанти відповіді (А, Б, В, Г).\n4. НІКОЛИ не пиши правильну відповідь одразу! ЧЕКАЙ відповіді.\n5. Назви поточний рахунок (старт з 0 балів) і задай наступне.`,
+            'rpg': "Ти — Майстер Гри (Game Master) у текстовій RPG. ПРАВИЛА:\n1. На початку гри спитай расу, клас, ім'я.\n2. Починай пригоду, описуй оточення детально.\n3. В кінці КОЖНОГО свого повідомлення пропонуй 2-4 пронумеровані варіанти дій (А, Б, В, Г).\n4. Гнучко реагуй на нестандартні дії гравця.",
+            'admin_chat': "Ти адміністратор. Відповідай коротко."
         };
 
-        // ТВОЯ ОРИГІНАЛЬНА ФУНКЦІЯ ШІ
+        // ТВОЯ ОРИГІНАЛЬНА ФУНКЦІЯ ШІ З GITHUB + РЕЗЕРВ GEMINI
         window.askAI = async function(query, imageBase64) {
             let qLower = (query || "").toLowerCase().replace(/[?.,!]/g, '').trim();
 
@@ -1776,28 +1787,17 @@
                 return "Я — персональний штучний інтелект ліцею №8!";
             }
 
-            const userClass = (window.currentUser && window.currentUser.userClass && window.currentUser.userClass !== '-') ? window.currentUser.userClass : "середніх та старших класів";
+            const STRICT_RULES = `\n\nДОТРИМУЙСЯ ЦЬОГО СТИЛЮ НАПИСАННЯ:\n1. Спілкуйся природно, привітно і по-людськи.\n2. ВАЖЛИВО: Коли тебе просять допомогти з домашнім завданням або вирішити задачу/приклад, НІКОЛИ не давай готову відповідь чи повністю розв'язане завдання. Натомість поясни правила, нагадай формули, розпиши порядок дій та підкажи перший крок, щоб учень міг вирішити все самостійно.\n3. Відповідай коротко і по суті.\n4. СУВОРА ГРАМАТИКА: Пиши виключно простою літературною українською мовою. КАТЕГОРИЧНО ЗАБОРОНЕНО використовувати вигадані неіснуючі слова (наприклад: "розумляч", "трусильник" тощо). Пиши "у ліцеї", а не "у ліжії".\n5. ПОВИНЕН завжди говорити правду і спиратися на факти.\n6. УНИКАЙ відповідей при невпевненості.`;
 
-            const PROMPTS = {
-                'default': "Ти помічник ліцею №8 (м. Житомир).", 
-                'math': "Ти вчитель математики ліцею №8. Допомагай з алгеброю та геометрією. Формули пиши в $...$.", 
-                'ukr': "Ти вчитель української мови та літератури ліцею №8.", 
-                'translate': "Ти професійний перекладач.",
-                'quiz': `Ти — харизматичний ведучий вікторини для учня ${userClass}. СУВОРІ ПРАВИЛА:\n1. Задавай ТІЛЬКИ ОДНЕ питання за раз.\n2. Самостійно оціни складність і визнач чесний час на відповідь. В КІНЦІ повідомлення ОБОВ'ЯЗКОВО додай тег [ЧАС: X] (де X - секунди).\n3. Давай 4 варіанти відповіді (А, Б, В, Г).\n4. НІКОЛИ не пиши правильну відповідь одразу! ЧЕКАЙ відповіді.\n5. Назви поточний рахунок (старт з 0 балів) і задай наступне.`,
-                'rpg': "Ти — Майстер Гри (Game Master) у текстовій RPG. ПРАВИЛА:\n1. На початку гри спитай расу, клас, ім'я.\n2. Починай пригоду, описуй оточення детально.\n3. В кінці КОЖНОГО свого повідомлення пропонуй 2-4 пронумеровані варіанти дій (А, Б, В, Г).\n4. Гнучко реагуй на нестандартні дії гравця.",
-                'admin_chat': "Ти адміністратор. Відповідай коротко."
-            };
-
-            const STRICT_RULES = `\n\nДОТРИМУЙСЯ ЦЬОГО СТИЛЮ НАПИСАННЯ:\n1. Спілкуйся природно, привітно і по-людськи.\n2. ВАЖЛИВО: Коли тебе просять допомогти з домашнім завданням або вирішити задачу, НІКОЛИ не давай готову відповідь чи повністю розв'язане завдання. Натомість поясни правила, нагадай формули, розпиши порядок дій та підкажи перший крок.\n3. Відповідай коротко і по суті.\n4. СУВОРА ГРАМАТИКА: Пиши виключно простою літературною українською мовою. КАТЕГОРИЧНО ЗАБОРОНЕНО використовувати вигадані неіснуючі слова (наприклад: "розумляч", "трусильник"). Пиши "у ліцеї", а не "у ліжії".\n5. ПОВИНЕН завжди говорити правду і спиратися на факти.\n6. УНИКАЙ відповідей при невпевненості.`;
-
-            let sysPrompt = (PROMPTS[window.currentMode] || PROMPTS['default']) + STRICT_RULES + "\n\nВАЖЛИВО: Відповідай виключно ідеальною українською мовою. СУВОРО ЗАБОРОНЕНО використовувати теги <think> або писати свої внутрішні міркування.";
-
+            let sysPrompt = (SYSTEM_PROMPTS[window.currentMode] || SYSTEM_PROMPTS['default']) + STRICT_RULES + "\n\nВАЖЛИВО: Відповідай виключно ідеальною українською мовою. СУВОРО ЗАБОРОНЕНО використовувати теги <think> або писати свої внутрішні міркування.";
+            
             let isHistoryRequest = qLower.includes('ліце') || qLower.includes('школ') || qLower.includes('історі') || qLower.includes('директор') || qLower.includes('вчит');
             if (window.currentMode === 'default' && isHistoryRequest) {
                 sysPrompt += "\n\n[ДОВІДКА ПРО ІСТОРІЮ ЛІЦЕЮ №8]:\n" + LYCEUM_HISTORY + "\n\nСИСТЕМНА ВКАЗІВКА: Якщо учень питає про історію ліцею, розкажи її ПОВНІСТЮ та максимально детально.";
             }
 
             let safeQuery = query || "Допоможи мені з цим зображенням.";
+            
             if (imageBase64) {
                 try {
                     window.addMessageToDOM('system', "🔍 Сканую текст з фото...", true);
@@ -1809,7 +1809,7 @@
             }
 
             let webSearchData = "";
-            if (query.length > 3 && (window.currentMode === 'default' || window.currentMode === 'admin_chat')) {
+            if (query.length > 3 && window.currentMode === 'default') {
                 try {
                     const wikiController = new AbortController();
                     const wikiTimeoutId = setTimeout(() => wikiController.abort(), 3000);
@@ -1822,7 +1822,9 @@
                             webSearchData = wikiData.query.search.slice(0, 3).map(s => s.title + ": " + s.snippet.replace(/<\/?[^>]+(>|$)/g, "")).join('\n');
                         }
                     }
-                } catch(e) {}
+                } catch(e) {
+                    console.warn("Помилка Вікіпедії:", e);
+                }
             }
 
             if (webSearchData.length > 5) {
@@ -1830,7 +1832,7 @@
             }
 
             const messages = [{ role: 'system', content: sysPrompt }];
-            const validHistory = window.chatHistory.filter(m => m.role === 'user' || m.role === 'ai').slice(-6);
+            const validHistory = window.chatHistory.filter(m => m.role === 'user' || m.role === 'ai').slice(-5);
             validHistory.forEach(msg => {
                 messages.push({ role: msg.role === 'ai' ? 'assistant' : 'user', content: msg.content });
             });
@@ -1852,12 +1854,12 @@
                     res = res.replace(/<think>[\s\S]*/g, '');
                     res = res.trim();
                 }
-                return window.cleanAIResponse(res);
+                return window.cleanAIResponse ? window.cleanAIResponse(res) : res;
             };
 
             const tryFetch = async (method, url, bodyObj) => {
                 const controller = new AbortController();
-                const id = setTimeout(() => controller.abort(), 20000); 
+                const id = setTimeout(() => controller.abort(), 60000); 
                 const options = { method, signal: controller.signal };
                 if (method === 'POST') {
                     options.headers = { 'Content-Type': 'application/json' };
@@ -1878,25 +1880,70 @@
                 return null;
             };
 
-            let ans = await tryFetch('POST', 'https://text.pollinations.ai/', { messages, model: 'openai', seed: Math.floor(Math.random() * 1000000) });
+            let ans = await tryFetch('POST', 'https://text.pollinations.ai/', { messages, model: 'openai' });
             if (ans) return ans;
 
-            ans = await tryFetch('POST', 'https://text.pollinations.ai/', { messages, model: 'llama', seed: Math.floor(Math.random() * 1000000) });
+            ans = await tryFetch('POST', 'https://text.pollinations.ai/', { messages, model: 'llama' });
             if (ans) return ans;
 
-            let fallbackPrompt = `Ти ШІ ліцею №8. Учень питає: ${query}. Відповідай українською.`;
+            let fallbackPrompt = `Ти ШІ ліцею №8. Учень питає: ${query}. Відповідай українською. `;
+
             ans = await tryFetch('GET', `https://text.pollinations.ai/${encodeURIComponent(fallbackPrompt)}?model=openai`, null);
             if (ans) return ans;
 
-            // ПЕРЕВІРКА НА LIVE SERVER (127.0.0.1)
-            const isLocal = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
-            if (isLocal) {
-                // Кидаємо не технічну помилку, а людське пояснення!
-                throw new Error("Запит заблоковано захистом Pollinations. Вони блокують локальні адреси (Live Server). Просто завантаж цей код на GitHub, і все запрацює ідеально!");
+            // БРОНЯ (Gemini) на випадок падіння Pollinations або блокування Live Server
+            const apiKeys = window.APP_CONFIG?.GEMINI_API_KEYS || [];
+            if (apiKeys.length > 0) {
+                let geminiModel = window.APP_CONFIG?.GEMINI_MODEL || "gemini-1.5-flash";
+                if (geminiModel.includes("3.0")) geminiModel = "gemini-1.5-flash";
+
+                let geminiContents = [];
+                let lastRole = null;
+                const allMsgs = [...validHistory, {role: 'user', content: safeQuery}];
+                
+                allMsgs.forEach(m => {
+                    const r = (m.role === 'ai' || m.role === 'assistant') ? 'model' : 'user';
+                    if (geminiContents.length === 0 && r === 'model') {
+                        geminiContents.push({ role: 'user', parts: [{ text: 'Почнімо.' }] });
+                        lastRole = 'user';
+                    }
+                    if (r === lastRole) {
+                        geminiContents[geminiContents.length - 1].parts[0].text += "\n\n" + m.content;
+                    } else {
+                        geminiContents.push({ role: r, parts: [{ text: m.content }] });
+                        lastRole = r;
+                    }
+                });
+
+                if (typeof window.currentGeminiKeyIndex === 'undefined') window.currentGeminiKeyIndex = 0;
+                
+                for (let i = 0; i < apiKeys.length; i++) {
+                    let idx = (window.currentGeminiKeyIndex + i) % apiKeys.length;
+                    let key = apiKeys[idx];
+                    if (!key || key.trim() === "") continue;
+
+                    try {
+                        const url = `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${key.trim()}`;
+                        const res = await fetch(url, { 
+                            method: 'POST', 
+                            headers: { 'Content-Type': 'application/json' }, 
+                            body: JSON.stringify({
+                                systemInstruction: { parts: [{ text: sysPrompt }] },
+                                contents: geminiContents,
+                                generationConfig: { temperature: 0.7 }
+                            }) 
+                        });
+                        if (res.ok) {
+                            window.currentGeminiKeyIndex = idx;
+                            const result = await res.json();
+                            const txt = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                            if (txt) return window.cleanAIResponse ? window.cleanAIResponse(txt) : txt;
+                        }
+                    } catch(e) {}
+                }
             }
 
-            // Якщо ми не на localhost, але всі сервери впали
-            return "📡 Упс... Схоже, усі безкоштовні сервери штучного інтелекту зараз перевантажені запитами з усього світу. Будь ласка, зачекай хвилинку і спробуй ще раз! Я тут і готовий допомогти 😉";
+            throw new Error("Сервери ШІ перевантажені або цей запит блокується фільтрами. Будь ласка, спробуйте перефразувати питання або зачекайте хвилинку!");
         };
 
         window.handleSend = async function(e) {
@@ -1936,8 +1983,7 @@
                 const answer = await window.askAI(textContent, imageContent);
                 window.addMessageToDOM('ai', answer);
             } catch (err) {
-                // Якщо зловили Error - показуємо його як системне повідомлення
-                window.addMessageToDOM('system', `❌ ${err.message}`, true); 
+                window.addMessageToDOM('system', `❌ Збій: ${err.message}`, true); 
                 if(window.chatHistory.length > 0 && window.chatHistory[window.chatHistory.length-1].role === 'user') {
                     window.chatHistory.pop();
                     window.saveMemory();
@@ -1984,7 +2030,7 @@
         // === 1. ІНІЦІАЛІЗАЦІЯ НАЛАШТУВАНЬ З CONFIG.JS ===
         if (!window.APP_CONFIG) {
             window.APP_CONFIG = {
-                GEMINI_API_KEYS: [],
+                GEMINI_API_KEYS: [], // Використовуємо ключі Gemini з .env
                 GEMINI_MODEL: "gemini-2.5-flash", 
                 ELEVENLABS_API_KEY: "",
                 GOOGLE_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwcWbqYhvQ94w7qxy3qgM3x6hm3fC-u4dp48dznpneg_GAkCavPo4o0lykOIhb9fzpy/exec"
