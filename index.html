@@ -17,10 +17,7 @@
     <!-- MathJax -->
     <script>
         window.MathJax = {
-            tex: { 
-                inlineMath: [['$', '$'], ['\\(', '\\)']], 
-                displayMath: [['$$', '$$'], ['\\[', '\\]']] 
-            },
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
             startup: { typeset: false }
         };
     </script>
@@ -233,7 +230,7 @@
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
         /* ==========================================
-           6. ПІДВАЛ ЧАТУ ТА ВВІД
+           6. ПІДВАЛ ЧАТУ ТА ВВІД (ВІДНОВЛЕНО CSS)
            ========================================== */
         #chat-footer {
             position: absolute; bottom: 0; left: 0; right: 0;
@@ -348,7 +345,7 @@
         .history-item.active { background: rgba(59, 130, 246, 0.1); border-color: var(--primary); }
 
         /* ==========================================
-           9. РОЗКЛАД, НАЛАШТУВАННЯ ТА АДМІНКА
+           9. РОЗКЛАД, НАЛАШТУВАННЯ ТА СТОРІНКИ
            ========================================== */
         .page-content { 
             position: absolute; inset: 0; overflow-y: auto; 
@@ -362,7 +359,6 @@
         .setting-group label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--text-main); }
         .setting-control { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-tab); color: var(--text-main); font-size: 15px; font-family: inherit; outline: none; }
         
-        /* Розклад */
         .sch-toggle-group { display: flex; background: var(--bg-main); border-radius: 14px; border: 1px solid var(--border); padding: 4px; margin-bottom: 12px; }
         .sch-toggle-btn { flex: 1; border: none; background: transparent; padding: 12px; font-size: 14px; font-weight: 600; color: var(--text-muted); border-radius: 10px; cursor: pointer; transition: 0.2s; }
         .sch-toggle-btn.active { background: var(--bg-tab); color: var(--primary); box-shadow: var(--shadow-sm); }
@@ -383,7 +379,6 @@
         [data-theme="dark"] .sch-room { background: rgba(59,130,246,0.2); color: #93c5fd; }
         .sch-empty { text-align: center; color: var(--text-muted); padding: 30px; font-weight: 500; background: var(--glass); border-radius: 20px; border: 1px dashed var(--border); }
         
-        /* Фони */
         .preset-bgs { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
         .preset-bg-btn { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--border); cursor: pointer; transition: 0.2s; box-shadow: var(--shadow-sm); }
         .preset-bg-btn:hover { transform: scale(1.1); border-color: var(--primary); }
@@ -399,7 +394,7 @@
         #auth-overlay {
             background: var(--bg-main); background-image: var(--app-bg-image);
             background-size: cover; background-position: center; background-attachment: fixed;
-            display: flex; /* Робимо вікно видимим при першому завантаженні */
+            display: flex; 
         }
 
         .auth-card, .modal {
@@ -473,11 +468,34 @@
         .nav-item.active svg { transform: translateY(-2px); }
         .nav-label { font-size: 11px; font-weight: 600; }
 
-        /* Анімації */
-        @keyframes typingBounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        /* ==========================================
+           12. ТЕСТ-РАННЕР (FULLSCREEN)
+           ========================================== */
+        #test-runner-overlay { position: fixed; inset: 0; background: var(--bg-main); z-index: 999999; display: none; flex-direction: column; overflow-y: auto; padding: 20px; }
+        .tr-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--border); }
+        .tr-progress-bar { height: 8px; background: var(--border); border-radius: 4px; margin-bottom: 30px; overflow: hidden; }
+        .tr-progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.3s ease; }
+        .tr-q-box { display: none; animation: slideIn 0.4s ease; max-width: 700px; margin: 0 auto; width: 100%; }
+        .tr-q-box.active { display: block; }
+        .tr-q-text { font-size: 22px; font-weight: 700; color: var(--text-main); margin-bottom: 25px; line-height: 1.4; }
+        .tr-opt-label { display: flex; align-items: center; gap: 15px; padding: 18px; background: var(--bg-tab); border: 2px solid var(--border); border-radius: 16px; margin-bottom: 12px; cursor: pointer; transition: 0.2s; font-size: 16px; font-weight: 500; }
+        .tr-opt-label:hover { border-color: var(--primary); background: rgba(59,130,246,0.05); }
+        .tr-opt-label input { transform: scale(1.5); accent-color: var(--primary); }
+        .tr-textarea { width: 100%; height: 150px; padding: 15px; border-radius: 16px; border: 2px solid var(--border); font-family: inherit; font-size: 16px; resize: none; background: var(--bg-tab); color: var(--text-main); outline: none; }
+        .tr-textarea:focus { border-color: var(--primary); }
+        .tr-btn-next { margin-top: 20px; width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 16px; font-size: 18px; font-weight: 700; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(59,130,246,0.3); }
+        .tr-btn-next:disabled { background: var(--border); cursor: not-allowed; box-shadow: none; color: var(--text-muted); }
+        
+        .toast-overlay { position: fixed; inset: 0; background: rgba(16, 185, 129, 0.2); z-index: 1000000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); animation: fadeInOut 1s ease forwards; pointer-events: none; }
+        .toast-check { width: 100px; height: 100px; background: var(--success); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4); transform: scale(0.5); animation: popScale 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes typingBounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
         @keyframes micPulse { 0% { transform: scale(1); background: rgba(239,68,68,0.1); } 50% { transform: scale(1.1); background: rgba(239,68,68,0.2); } 100% { transform: scale(1); background: rgba(239,68,68,0.1); } }
         @keyframes wave { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(15deg); } 75% { transform: rotate(-15deg); } }
+        @keyframes fadeInOut { 0% { opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; } }
+        @keyframes popScale { to { transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -508,35 +526,9 @@
                 <select id="auth-class" class="auth-input">
                     <option value="" disabled selected>Клас / Роль...</option>
                     <option value="Викладач">👨‍🏫 Викладач</option>
-                    <option value="1-А">1-А</option>
-                    <option value="1-Б">1-Б</option>
-                    <option value="1-В">1-В</option>
-                    <option value="2-А">2-А</option>
-                    <option value="2-Б">2-Б</option>
-                    <option value="2-В">2-В</option>
-                    <option value="3-А">3-А</option>
-                    <option value="3-Б">3-Б</option>
-                    <option value="3-В">3-В</option>
-                    <option value="4-А">4-А</option>
-                    <option value="4-Б">4-Б</option>
-                    <option value="4-В">4-В</option>
-                    <option value="5-А">5-А</option>
-                    <option value="5-Б">5-Б</option>
-                    <option value="5-В">5-В</option>
-                    <option value="6-А">6-А</option>
-                    <option value="6-Б">6-Б</option>
-                    <option value="6-В">6-В</option>
-                    <option value="7-А">7-А</option>
-                    <option value="7-Б">7-Б</option>
-                    <option value="7-В">7-В</option>
                     <option value="8-А">8-А</option>
                     <option value="8-Б">8-Б</option>
-                    <option value="8-В">8-В</option>
                     <option value="9-А">9-А</option>
-                    <option value="9-Б">9-Б</option>
-                    <option value="9-В">9-В</option>
-                    <option value="10-А">10-А</option>
-                    <option value="11-А">11-А</option>
                 </select>
                 <input type="email" id="auth-email-reg" class="auth-input" placeholder="Електронна пошта">
                 <input type="password" id="auth-password-reg" class="auth-input" placeholder="Пароль">
@@ -552,17 +544,15 @@
             <div id="auth-main-buttons">
                 <button id="auth-submit-btn" class="auth-btn" onclick="window.handleAuth()">Увійти</button>
                 <div style="margin-top: 15px;">
-                    <button type="button" class="auth-toggle" id="auth-toggle-text" onclick="window.toggleAuthMode()">Немає акаунту? Зареєструватися</button>
-                    <br>
+                    <button type="button" class="auth-toggle" onclick="window.toggleAuthMode()">Немає акаунту? Зареєструватися</button><br>
                     <button type="button" class="auth-toggle" onclick="window.continueAsGuest()">Продовжити як гість</button>
                 </div>
             </div>
-
             <p id="auth-error" style="color: var(--danger); font-size: 13px; margin-top: 12px; display: none; font-weight: 500;"></p>
         </div>
     </div>
 
-    <!-- ГОЛОВНИЙ КОНТЕЙНЕР ДОДАТКУ -->
+    <!-- КОНТЕЙНЕР ДОДАТКУ -->
     <div id="tabs-container">
         
         <!-- 1. ЧАТ ЗІ ШІ -->
@@ -577,7 +567,6 @@
                         <div class="online-status"><span class="status-dot"></span><span>Онлайн</span></div>
                     </div>
                     
-                    <!-- МЕНЮ РЕЖИМІВ -->
                     <div class="mode-dropdown">
                         <div class="suggestions">
                             <div class="suggest-item" onclick="event.stopPropagation(); window.setMode('math')">
@@ -598,7 +587,6 @@
                             <div class="suggest-item" onclick="event.stopPropagation(); window.setMode('image')">
                                 🎨 Генерація <span>Малювання ШІ</span>
                             </div>
-                            <!-- RPG КВЕСТ (ПРИХОВАНИЙ ЗА ЗАМОВЧУВАННЯМ) -->
                             <div class="suggest-item" id="mode-rpg-btn" style="display: none;" onclick="event.stopPropagation(); window.setMode('rpg')">
                                 🐉 RPG Квест <span>Гра з текстом</span>
                             </div>
@@ -616,8 +604,6 @@
             </header>
 
             <main id="chat-box">
-                <div id="quiz-timer-container">⏳ Час: <span id="quiz-timer">30</span>с</div>
-                
                 <div id="welcome">
                     <span class="welcome-icon" style="font-size: 48px;">👋</span>
                     <h2>Привіт, ліцеїсте!</h2>
@@ -660,9 +646,6 @@
         <div id="tab-schedule" class="tab-content">
             <header>
                 <div class="header-left" style="background: none; border: none; box-shadow: none; padding-left: 0;">
-                    <button class="icon-btn" onclick="window.switchTab('tab-chat', 'nav-chat-btn')" title="Назад до чату" style="margin-right: 8px;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 5"></polyline></svg>
-                    </button>
                     <div class="header-info">
                         <h1 style="background: var(--glass); padding: 8px 16px; border-radius: 12px; backdrop-filter: blur(12px); border: 1px solid var(--border); margin-bottom: 2px;">📅 Розклад ліцею №8</h1>
                         <div style="font-size: 10px; color: var(--primary); font-weight: 600; padding-left: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Розробив учень 9-А класу Меліхов Данило</div>
@@ -698,9 +681,6 @@
         <div id="tab-settings" class="tab-content">
             <header>
                 <div class="header-left" style="background: none; border: none; box-shadow: none; padding-left: 0;">
-                    <button class="icon-btn" onclick="window.switchTab('tab-chat', 'nav-chat-btn')" title="Назад до чату" style="margin-right: 8px;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 5"></polyline></svg>
-                    </button>
                     <div class="header-info">
                         <h1 style="background: var(--glass); padding: 8px 16px; border-radius: 12px; backdrop-filter: blur(12px);">⚙️ Налаштування</h1>
                     </div>
@@ -719,7 +699,7 @@
                 <div class="card">
                     <div class="setting-group" style="margin-bottom: 0;">
                         <label>Зв'язок з адміністрацією</label>
-                        <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 12px;">Маєте питання або пропозиції? Напишіть нам напряму, і ми відповімо вам якнайшвидше.</p>
+                        <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 12px;">Маєте питання або пропозиції? Напишіть нам напряму.</p>
                         <button onclick="window.openFeedback()" style="width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.2s;">💬 Відкрити чат підтримки</button>
                     </div>
                 </div>
@@ -781,9 +761,6 @@
         <div id="tab-admin" class="tab-content">
             <header>
                 <div class="header-left" style="background: none; border: none; box-shadow: none; padding-left: 0;">
-                    <button class="icon-btn" onclick="window.switchTab('tab-chat', 'nav-chat-btn')" title="Назад до чату" style="margin-right: 8px;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 5"></polyline></svg>
-                    </button>
                     <div class="header-info">
                         <h1 style="background: var(--glass); padding: 8px 16px; border-radius: 12px; backdrop-filter: blur(12px); border: 1px solid var(--border);">👑 Панель Керування</h1>
                     </div>
@@ -815,9 +792,6 @@
         <div id="tab-admin-messages" class="tab-content">
             <header>
                 <div class="header-left" style="background: none; border: none; box-shadow: none; padding-left: 0;">
-                    <button class="icon-btn" onclick="window.switchTab('tab-chat', 'nav-chat-btn')" title="Назад до чату" style="margin-right: 8px;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 5"></polyline></svg>
-                    </button>
                     <div class="header-info">
                         <h1 style="background: var(--glass); padding: 8px 16px; border-radius: 12px; border: 1px solid var(--border);">💬 Діалоги з користувачами</h1>
                     </div>
@@ -859,11 +833,8 @@
         <div id="tab-tests" class="tab-content">
             <header>
                 <div class="header-left" style="background: none; border: none; box-shadow: none; padding-left: 0;">
-                    <button class="icon-btn" onclick="window.switchTab('tab-chat', 'nav-chat-btn')" title="Назад до чату" style="margin-right: 8px;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 5"></polyline></svg>
-                    </button>
                     <div class="header-info">
-                        <h1 style="background: var(--glass); padding: 8px 16px; border-radius: 12px; backdrop-filter: blur(12px); border: 1px solid var(--border);">📝 Інтерактивні Тести</h1>
+                        <h1 style="background: var(--glass); padding: 8px 16px; border-radius: 12px; backdrop-filter: blur(12px); border: 1px solid var(--border);">📝 Платформа Тестів</h1>
                     </div>
                 </div>
             </header>
@@ -871,70 +842,57 @@
                 
                 <div class="sch-toggle-group">
                     <button class="sch-toggle-btn active" id="btn-test-ai" onclick="window.switchTestMode('ai')">ШІ Генератор</button>
-                    <button class="sch-toggle-btn" id="btn-test-manual" onclick="window.switchTestMode('manual')">Створити ручнo</button>
+                    <button class="sch-toggle-btn" id="btn-test-manual" onclick="window.switchTestMode('manual')">Конструктор</button>
+                    <button class="sch-toggle-btn" id="btn-test-my" onclick="window.switchTestMode('my')">Мої тести</button>
                 </div>
 
-                <!-- Режим: Генерація через ШІ -->
+                <!-- Режим: ШІ -->
                 <div id="test-mode-ai" class="card" style="border-color: var(--primary);">
-                    <h3 style="color: var(--text-main); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
-                        <span>✨</span> Згенерувати тест (ШІ)
-                    </h3>
-                    <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 12px;">Напишіть тему (наприклад: "Історія України 8 клас козаки"), і ШІ складе для вас повноцінний тест!</p>
+                    <h3 style="margin-bottom: 8px;">✨ Згенерувати тест</h3>
+                    <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 12px;">Напишіть тему (напр: "Історія 8 клас"), і ШІ складе тест.</p>
                     <div style="display: flex; gap: 8px;">
-                        <input type="text" id="ai-test-topic" class="setting-control" placeholder="Яку тему тестуємо?..." style="margin-bottom: 0;" onkeydown="if(event.key === 'Enter') window.generateAITest()">
-                        <button class="send-btn" onclick="window.generateAITest()" style="margin-left: 0; transform: none; width: 45px; height: 45px;" id="btn-gen-test">
-                            <svg viewBox="0 0 24 24" style="width: 20px; height: 20px;"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-                        </button>
+                        <input type="text" id="ai-test-topic" class="setting-control" placeholder="Яку тему тестуємо?..." style="margin-bottom: 0;">
+                        <button class="send-btn" onclick="window.generateAITest()" style="margin-left: 0; width: 45px; height: 45px;"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
                     </div>
-                    <div id="ai-test-loader" style="display: none; color: var(--primary); font-size: 13px; margin-top: 10px; font-weight: 600; text-align: center;">⏳ ШІ складає питання... Це займе до 10 секунд...</div>
+                    <div id="ai-test-loader" style="display: none; color: var(--primary); font-size: 13px; margin-top: 10px; font-weight: 600; text-align: center;">⏳ ШІ складає питання (до 15 сек)...</div>
                 </div>
 
-                <!-- Режим: Ручне створення тесту -->
+                <!-- Режим: Ручний -->
                 <div id="test-mode-manual" class="card" style="display: none; border-color: var(--accent);">
-                    <h3 style="color: var(--text-main); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
-                        <span>🛠️</span> Конструктор тесту
-                    </h3>
-                    <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 15px;">Створіть свій авторський тест, як на "Всеосвіті".</p>
+                    <h3 style="margin-bottom: 8px;">🛠️ Конструктор тесту</h3>
+                    <input type="text" id="manual-test-title" class="setting-control" placeholder="Назва тесту..." style="font-weight: bold;">
                     
-                    <input type="text" id="manual-test-title" class="setting-control" placeholder="Назва вашого тесту (напр. Географія 8 клас)" style="font-weight: bold;">
+                    <!-- Чекбокс: Публічний тест -->
+                    <label style="display:flex; align-items:center; gap:8px; margin-top:10px; font-size:14px; cursor:pointer;">
+                        <input type="checkbox" id="manual-test-public" style="transform:scale(1.2); accent-color:var(--primary);">
+                        Публічний доступ (Буде видно всім у каталозі)
+                    </label>
+
+                    <div id="manual-questions-container" style="margin-top: 15px; display: flex; flex-direction: column; gap: 15px;"></div>
                     
-                    <div id="manual-questions-container" style="margin-top: 15px; display: flex; flex-direction: column; gap: 15px;">
-                        <!-- Блоки з питаннями будуть тут -->
-                    </div>
-                    
-                    <button onclick="window.addManualQuestion()" style="margin-top: 15px; width: 100%; padding: 12px; background: var(--bg-tab); border: 1px dashed var(--primary); color: var(--primary); border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='rgba(59,130,246,0.1)'" onmouseout="this.style.background='var(--bg-tab)'">+ Додати питання</button>
-                    
-                    <button onclick="window.publishManualTest()" style="margin-top: 15px; width: 100%; padding: 14px; background: var(--success); color: white; border: none; border-radius: 12px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; box-shadow: var(--shadow-sm);">💾 Зберегти та отримати посилання</button>
+                    <button onclick="window.addManualQuestion()" style="margin-top: 15px; width: 100%; padding: 12px; background: var(--bg-tab); border: 1px dashed var(--primary); color: var(--primary); border-radius: 12px; font-weight: 600; cursor: pointer;">+ Додати питання</button>
+                    <button onclick="window.publishManualTest()" style="margin-top: 15px; width: 100%; padding: 14px; background: var(--success); color: white; border: none; border-radius: 12px; font-weight: 600;">💾 Зберегти та отримати посилання</button>
                 </div>
 
-                <!-- Контейнер для проходження тесту (рендеринг) -->
+                <!-- Режим: Мої тести та результати -->
+                <div id="test-mode-my" class="card" style="display: none; border-color: var(--success);">
+                    <h3 style="margin-bottom: 8px;">📊 Мої створені тести</h3>
+                    <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 15px;">Натисніть на тест, щоб скопіювати посилання або переглянути оцінки учнів.</p>
+                    <div id="my-tests-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+                </div>
+
                 <div id="test-render-container">
-                    <div class="sch-empty">Тут з'явиться тест 👆</div>
+                    <div class="sch-empty">Тут з'явиться прев'ю тесту 👆</div>
                 </div>
             </div>
         </div>
 
     </div>
 
-    <!-- SIDEBAR ІСТОРІЯ ЧАТІВ -->
-    <div id="history-sidebar">
-        <div class="sidebar-header" style="justify-content: flex-start; gap: 15px;">
-            <button class="icon-btn" onclick="window.toggleHistorySidebar()" style="border: none; background: transparent; padding: 5px; box-shadow: none; margin: 0; min-width: auto; height: auto;" title="Сховати історію">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-            </button>
-            <h2 style="margin: 0;">Історія чатів</h2>
-        </div>
-        <button class="new-chat-btn" onclick="window.createNewChat()">+ Новий чат</button>
-        <div id="history-list"></div>
-    </div>
-
-    <!-- НИЖНЯ НАВІГАЦІЯ (СЛАЙДЕР) -->
+    <!-- НИЖНЯ НАВІГАЦІЯ -->
     <div id="bottom-nav-container" class="open">
-        <button class="nav-toggle-btn" onclick="document.getElementById('bottom-nav-container').classList.toggle('open'); document.body.classList.toggle('nav-closed'); document.getElementById('mode-trigger')?.classList.remove('show-modes');">
-            <svg viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
-        </button>
         <nav id="bottom-nav">
-            <button class="nav-item active" id="nav-chat-btn" onclick="window.openAIChat()">
+            <button class="nav-item active" id="nav-chat-btn" onclick="window.switchTab('tab-chat', 'nav-chat-btn')">
                 <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                 <span class="nav-label">Чат</span>
             </button>
@@ -961,7 +919,19 @@
         </nav>
     </div>
 
-    <!-- МОДАЛКИ -->
+    <!-- SIDEBAR ІСТОРІЯ ЧАТІВ -->
+    <div id="history-sidebar">
+        <div class="sidebar-header" style="justify-content: flex-start; gap: 15px;">
+            <button class="icon-btn" onclick="window.toggleHistorySidebar()" style="border: none; background: transparent; padding: 5px; box-shadow: none; margin: 0; min-width: auto; height: auto;" title="Сховати історію">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </button>
+            <h2 style="margin: 0;">Історія чатів</h2>
+        </div>
+        <button class="new-chat-btn" onclick="window.createNewChat()">+ Новий чат</button>
+        <div id="history-list"></div>
+    </div>
+
+    <!-- МОДАЛКИ (Очищення та Видалення) -->
     <div id="modal-overlay">
         <div class="modal">
             <h2>Очистити чат?</h2>
@@ -990,291 +960,60 @@
         </div>
     </div>
 
-    <!-- ПІДКЛЮЧЕННЯ ЗОВНІШНІХ ФАЙЛІВ -->
+    <!-- FULLSCREEN ТЕСТ РАННЕР (ЯК "НА УРОК") -->
+    <div id="test-runner-overlay">
+        <!-- Інтро екран (Для гостей) -->
+        <div id="tr-intro-screen" style="display: none; max-width: 500px; margin: auto; width: 100%; background: var(--bg-tab); padding: 30px; border-radius: 20px; box-shadow: var(--shadow-md); border: 1px solid var(--border);">
+            <h1 id="tr-intro-title" style="text-align: center; margin-bottom: 10px; color: var(--primary);">Назва тесту</h1>
+            <p style="text-align: center; color: var(--text-muted); margin-bottom: 25px; font-size: 14px;">Організатор чекає на ваші результати. Для проходження необхідний повний екран.</p>
+            
+            <div id="tr-guest-fields" style="display: none; margin-bottom: 20px;">
+                <label style="font-weight: 600; font-size: 14px; margin-bottom: 5px; display: block;">Ваше Прізвище та Ім'я:</label>
+                <input type="text" id="tr-guest-name" class="setting-control" placeholder="Шевченко Тарас" style="border-color: var(--primary);">
+            </div>
+            
+            <button onclick="window.startFullscreenTest()" style="width: 100%; padding: 16px; background: var(--success); color: white; border: none; border-radius: 16px; font-size: 18px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);">Почати тестування</button>
+        </div>
+
+        <!-- Сам процес тесту -->
+        <div id="tr-active-screen" style="display: none; width: 100%; max-width: 800px; margin: 0 auto; padding-top: 20px;">
+            <div class="tr-header">
+                <span id="tr-current-info" style="font-weight: 700; color: var(--text-muted);">Питання 1 / 10</span>
+                <button onclick="window.abortTest()" style="background: none; border: none; color: var(--danger); font-weight: 600; cursor: pointer;">✕ Завершити достроково</button>
+            </div>
+            <div class="tr-progress-bar"><div class="tr-progress-fill" id="tr-progress"></div></div>
+            
+            <div id="tr-questions-area"></div>
+            
+            <button class="tr-btn-next" id="tr-next-btn" onclick="window.submitCurrentAnswer()">Зберегти відповідь</button>
+        </div>
+        
+        <!-- Завершення -->
+        <div id="tr-outro-screen" style="display: none; max-width: 500px; margin: auto; width: 100%; background: var(--bg-tab); padding: 40px 30px; border-radius: 20px; box-shadow: var(--shadow-md); border: 1px solid var(--border); text-align: center;">
+            <h1 style="color: var(--success); margin-bottom: 10px;">Тест завершено! 🎉</h1>
+            <p style="color: var(--text-muted); margin-bottom: 25px;">Ваші результати успішно відправлено організатору.</p>
+            <div style="font-size: 48px; font-weight: 900; color: var(--primary); margin-bottom: 30px;" id="tr-final-score">0 / 0</div>
+            <button onclick="window.exitRunner()" style="width: 100%; padding: 14px; background: var(--bg-main); color: var(--text-main); border: 1px solid var(--border); border-radius: 12px; font-weight: 600; cursor: pointer;">Повернутися на головну</button>
+        </div>
+    </div>
+
+    <!-- Анімація зарахування відповіді -->
+    <div class="toast-overlay" id="toast-success">
+        <div class="toast-check">
+            <svg viewBox="0 0 24 24" width="50" height="50" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+    </div>
+
+    <!-- 1. ПІДКЛЮЧЕННЯ ЗОВНІШНІХ ФАЙЛІВ -->
     <script src="config.js"></script>
     <script src="voices.js"></script>
     <script src="schedule.js"></script>
     <script src="effects.js"></script>
     <script src="image_logic.js"></script>
     <script src="ad_blocker.js"></script>
+    <script src="tests.js"></script> <!-- ПІДКЛЮЧЕНО ЛОГІКУ ТЕСТІВ -->
 
-    <!-- ЛОГІКА ІНТЕРАКТИВНИХ ТЕСТІВ (Вбудовано) -->
-    <script>
-        (function() {
-            window.currentTestData = null;
-            window.manualQuestionCount = 0;
-
-            // Перемикання режимів у вкладці тестів
-            window.switchTestMode = function(mode) {
-                document.getElementById('btn-test-ai').classList.toggle('active', mode === 'ai');
-                document.getElementById('btn-test-manual').classList.toggle('active', mode === 'manual');
-                document.getElementById('test-mode-ai').style.display = mode === 'ai' ? 'block' : 'none';
-                document.getElementById('test-mode-manual').style.display = mode === 'manual' ? 'block' : 'none';
-                document.getElementById('test-render-container').innerHTML = '<div class="sch-empty">Тут з\'явиться ваш тест 👆</div>';
-            };
-
-            // Додавання питання в ручному конструкторі
-            window.addManualQuestion = function() {
-                window.manualQuestionCount++;
-                const qId = window.manualQuestionCount;
-                const html = `
-                    <div class="manual-q-block" data-qid="${qId}" style="background:var(--bg-main); padding:15px; border-radius:12px; border:1px solid var(--border); position:relative;">
-                        <button onclick="this.parentElement.remove()" style="position:absolute; top:10px; right:10px; background:var(--danger); color:white; border:none; border-radius:50%; width:24px; height:24px; cursor:pointer; font-weight:bold;">✕</button>
-                        <input type="text" class="setting-control q-text" placeholder="Запитання ${qId}" style="margin-bottom:10px; border-color:var(--primary);">
-                        <div style="display:flex; flex-direction:column; gap:8px;">
-                            <label style="display:flex; align-items:center; gap:8px; background:var(--bg-tab); padding:8px; border-radius:8px; border:1px solid var(--border);"><input type="radio" name="correct_${qId}" value="0" checked style="accent-color:var(--success); transform:scale(1.2);"> <input type="text" class="setting-control opt-text" placeholder="Варіант А" style="padding:8px; border:none; box-shadow:none;"></label>
-                            <label style="display:flex; align-items:center; gap:8px; background:var(--bg-tab); padding:8px; border-radius:8px; border:1px solid var(--border);"><input type="radio" name="correct_${qId}" value="1" style="accent-color:var(--success); transform:scale(1.2);"> <input type="text" class="setting-control opt-text" placeholder="Варіант Б" style="padding:8px; border:none; box-shadow:none;"></label>
-                            <label style="display:flex; align-items:center; gap:8px; background:var(--bg-tab); padding:8px; border-radius:8px; border:1px solid var(--border);"><input type="radio" name="correct_${qId}" value="2" style="accent-color:var(--success); transform:scale(1.2);"> <input type="text" class="setting-control opt-text" placeholder="Варіант В" style="padding:8px; border:none; box-shadow:none;"></label>
-                            <label style="display:flex; align-items:center; gap:8px; background:var(--bg-tab); padding:8px; border-radius:8px; border:1px solid var(--border);"><input type="radio" name="correct_${qId}" value="3" style="accent-color:var(--success); transform:scale(1.2);"> <input type="text" class="setting-control opt-text" placeholder="Варіант Г" style="padding:8px; border:none; box-shadow:none;"></label>
-                        </div>
-                        <div style="font-size:11px; color:var(--text-muted); margin-top:8px; text-align:right;">Позначте кружечком правильну відповідь</div>
-                    </div>
-                `;
-                document.getElementById('manual-questions-container').insertAdjacentHTML('beforeend', html);
-            };
-
-            // Публікація ручного тесту
-            window.publishManualTest = async function() {
-                const title = document.getElementById('manual-test-title').value.trim();
-                if(!title) return alert('Будь ласка, введіть назву тесту!');
-                
-                const blocks = document.querySelectorAll('.manual-q-block');
-                if(blocks.length === 0) return alert('Додайте хоча б одне питання!');
-                
-                const testData = { title: title, questions: [] };
-                
-                for(let block of blocks) {
-                    const qText = block.querySelector('.q-text').value.trim();
-                    const opts = Array.from(block.querySelectorAll('.opt-text')).map(input => input.value.trim());
-                    const correctRadio = block.querySelector('input[type="radio"]:checked');
-                    
-                    if(!qText || opts.some(o => !o)) return alert('Заповніть всі поля у питаннях!');
-                    
-                    testData.questions.push({ 
-                        q: qText, 
-                        options: opts, 
-                        correctIndex: parseInt(correctRadio.value) 
-                    });
-                }
-
-                if(!window.fbSaveTest) return alert('База даних завантажується, зачекайте пару секунд і спробуйте знову.');
-                
-                try {
-                    const testId = 'test_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
-                    await window.fbSaveTest(testId, testData);
-                    
-                    const link = window.location.origin + window.location.pathname + '?testId=' + testId;
-                    
-                    // Відмальовуємо красиве повідомлення з посиланням
-                    document.getElementById('test-render-container').innerHTML = `
-                        <div style="text-align: center; padding: 25px; background: var(--glass); border-radius: 16px; border: 2px solid var(--success); box-shadow: var(--shadow-md); animation: fadeIn 0.4s ease;">
-                            <h2 style="color: var(--success); margin-bottom: 10px;">✅ Тест успішно створено!</h2>
-                            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 15px;">Надішліть це посилання учням (воно вже скопійоване в буфер обміну):</p>
-                            <input type="text" value="${link}" readonly style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-tab); color: var(--primary); font-weight: 600; text-align: center; cursor: pointer;" onclick="this.select(); document.execCommand('copy'); window.showToast('Посилання скопійовано!');">
-                            <button onclick="window.currentTestData = ${JSON.stringify(testData).replace(/"/g, '&quot;')}; window.renderActiveTest(window.currentTestData);" style="margin-top: 15px; padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer;">Пройти тест зараз</button>
-                        </div>
-                    `;
-                    
-                    // Копіюємо в буфер
-                    const tempInput = document.createElement("input");
-                    tempInput.value = link;
-                    document.body.appendChild(tempInput);
-                    tempInput.select();
-                    document.execCommand("copy");
-                    document.body.removeChild(tempInput);
-                    
-                    if (typeof window.showToast === 'function') window.showToast('Посилання збережено в буфер обміну!');
-                    
-                } catch(e) {
-                    alert('Помилка збереження: ' + e.message);
-                }
-            };
-
-            // Генерація тесту через ШІ
-            window.generateAITest = async function() {
-                const topicInput = document.getElementById('ai-test-topic');
-                const loader = document.getElementById('ai-test-loader');
-                const container = document.getElementById('test-render-container');
-                const btn = document.getElementById('btn-gen-test');
-                
-                const topic = topicInput.value.trim();
-                if (!topic) return alert('Будь ласка, введіть тему тесту!');
-
-                loader.style.display = 'block';
-                container.innerHTML = '';
-                btn.disabled = true;
-
-                const prompt = `Ти професійний вчитель. Створи цікавий тест (5 питань) на тему: "${topic}". 
-Поверни результат ВИКЛЮЧНО у форматі JSON. Без маркдауну, без пояснень, без тегів \`\`\`json.
-Структура JSON має бути точно такою:
-{
-  "title": "Назва тесту",
-  "questions": [
-    {
-      "q": "Текст питання",
-      "options": ["Варіант 1", "Варіант 2", "Варіант 3", "Варіант 4"],
-      "correctIndex": 0
-    }
-  ]
-}
-Заборони собі писати будь-що інше окрім цього JSON.`;
-
-                try {
-                    let jsonResponse = null;
-                    const apiKeys = window.APP_CONFIG?.GEMINI_API_KEYS || [];
-                    
-                    if (apiKeys.length > 0) {
-                        let key = apiKeys[Math.floor(Math.random() * apiKeys.length)];
-                        let geminiModel = "gemini-1.5-flash"; 
-                        const url = `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${key.trim()}`;
-                        
-                        const res = await fetch(url, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                contents: [{ role: 'user', parts: [{ text: prompt }] }],
-                                generationConfig: { 
-                                    temperature: 0.7, 
-                                    responseMimeType: "application/json" 
-                                }
-                            })
-                        });
-
-                        if (res.ok) {
-                            const result = await res.json();
-                            let txt = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                            if (txt) {
-                                // Залізобетонний парсинг
-                                let jsonMatch = txt.match(/\{[\s\S]*\}/);
-                                if (jsonMatch) jsonResponse = JSON.parse(jsonMatch[0]);
-                            }
-                        }
-                    }
-                    
-                    if (!jsonResponse) {
-                        const res = await fetch('https://api.airforce/v1/chat/completions', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                messages: [{ role: 'user', content: prompt }],
-                                model: 'gpt-4o-mini',
-                                temperature: 0.7
-                            })
-                        });
-                        const result = await res.json();
-                        let txt = result.choices?.[0]?.message?.content || "";
-                        let jsonMatch = txt.match(/\{[\s\S]*\}/);
-                        if (jsonMatch) jsonResponse = JSON.parse(jsonMatch[0]);
-                    }
-
-                    if (jsonResponse && jsonResponse.questions) {
-                        window.currentTestData = jsonResponse;
-                        
-                        // Додамо кнопку для публікації згенерованого тесту
-                        window.renderActiveTest(jsonResponse);
-                        const testCard = container.querySelector('.card');
-                        if (testCard) {
-                            const publishAiBtn = document.createElement('button');
-                            publishAiBtn.innerText = "🔗 Опублікувати та отримати посилання";
-                            publishAiBtn.style.cssText = "width: 100%; padding: 10px; background: transparent; border: 2px dashed var(--accent); color: var(--accent); border-radius: 12px; font-weight: 600; cursor: pointer; margin-bottom: 15px;";
-                            publishAiBtn.onclick = async () => {
-                                if(!window.fbSaveTest) return alert('База даних завантажується...');
-                                const testId = 'test_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
-                                await window.fbSaveTest(testId, window.currentTestData);
-                                const link = window.location.origin + window.location.pathname + '?testId=' + testId;
-                                prompt("Тест опубліковано! Скопіюйте посилання для учнів:", link);
-                            };
-                            testCard.insertBefore(publishAiBtn, testCard.children[1]); // Додаємо після заголовка
-                        }
-
-                    } else {
-                        throw new Error("Невірний формат даних від ШІ");
-                    }
-                } catch (e) {
-                    console.error("Помилка генерації тесту:", e);
-                    container.innerHTML = '<div class="sch-empty" style="color:var(--danger); border-color:var(--danger);">Помилка генерації. Сервери ШІ перевантажені або тема занадто складна. Спробуйте ще раз!</div>';
-                } finally {
-                    loader.style.display = 'none';
-                    btn.disabled = false;
-                }
-            };
-
-            window.renderActiveTest = function(data) {
-                const container = document.getElementById('test-render-container');
-                let html = `<div class="card"><h2 style="color:var(--primary); margin-bottom: 20px; font-size: 18px;">${data.title}</h2>`;
-                
-                data.questions.forEach((q, qIndex) => {
-                    html += `<div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border);">
-                                <h4 style="margin-bottom: 12px; color: var(--text-main); font-size: 15px; line-height: 1.4;">${qIndex + 1}. ${q.q}</h4>
-                                <div style="display: flex; flex-direction: column; gap: 8px;">`;
-                    
-                    q.options.forEach((opt, optIndex) => {
-                        html += `<label style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 12px; background: var(--bg-main); border-radius: 12px; border: 1px solid var(--border); transition: 0.2s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
-                                    <input type="radio" name="q_${qIndex}" value="${optIndex}" style="accent-color: var(--primary); transform: scale(1.2);">
-                                    <span style="font-size: 14px; color: var(--text-main); font-weight: 500;">${opt}</span>
-                                 </label>`;
-                    });
-                    html += `</div></div>`;
-                });
-
-                html += `<button onclick="window.checkTestResults()" style="width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; box-shadow: var(--shadow-sm);">Завершити тест та перевірити</button>`;
-                html += `</div>`;
-                
-                container.innerHTML = html;
-            };
-
-            window.checkTestResults = function() {
-                if (!window.currentTestData) return;
-                
-                let score = 0;
-                const total = window.currentTestData.questions.length;
-                const container = document.getElementById('test-render-container');
-
-                window.currentTestData.questions.forEach((q, qIndex) => {
-                    const selected = document.querySelector(`input[name="q_${qIndex}"]:checked`);
-                    const firstRadio = document.querySelector(`input[name="q_${qIndex}"]`);
-                    if (!firstRadio) return;
-                    
-                    const qDiv = firstRadio.closest('div').parentElement; 
-                    const allLabels = qDiv.querySelectorAll('label');
-                    
-                    if (allLabels[q.correctIndex]) {
-                        allLabels[q.correctIndex].style.background = 'rgba(16, 185, 129, 0.1)';
-                        allLabels[q.correctIndex].style.borderColor = 'var(--success)';
-                    }
-                    
-                    if (selected) {
-                        const val = parseInt(selected.value);
-                        if (val === q.correctIndex) {
-                            score++;
-                        } else {
-                            selected.closest('label').style.background = 'rgba(239, 68, 68, 0.1)';
-                            selected.closest('label').style.borderColor = 'var(--danger)';
-                        }
-                    }
-                });
-
-                container.querySelectorAll('input[type="radio"]').forEach(r => r.disabled = true);
-                
-                const btn = container.querySelector('button');
-                let message = 'Треба ще потренуватися! 💪';
-                if (score === total) message = 'Ідеально! 🎉';
-                else if (score >= total / 2) message = 'Гарний результат! 👍';
-
-                btn.outerHTML = `<div style="text-align: center; padding: 20px; background: var(--bg-main); border-radius: 12px; border: 2px dashed var(--primary); margin-top: 15px; animation: fadeIn 0.5s ease;">
-                                    <h2 style="color: var(--text-main); margin-bottom: 5px;">Ваш результат: <span style="color: var(--primary);">${score} / ${total}</span></h2>
-                                    <p style="color: var(--text-muted); font-size: 14px; font-weight: 600;">${message}</p>
-                                    <button onclick="window.currentTestData = null; document.getElementById('test-render-container').innerHTML = '<div class=\\'sch-empty\\'>Тут з\\'явиться тест 👆</div>'; document.getElementById('ai-test-topic').value = '';" style="margin-top: 15px; padding: 10px 20px; background: var(--bg-tab); border: 1px solid var(--border); color: var(--text-main); border-radius: 10px; cursor: pointer; font-weight: 600;">Пройти інший тест</button>
-                                 </div>`;
-                                 
-                if (score === total && typeof window.triggerConfetti === 'function') {
-                    window.triggerConfetti();
-                }
-            };
-        })();
-    </script>
-
-    <!-- ГЛОБАЛЬНА ЛОГІКА ДОДАТКУ -->
+    <!-- 2. ГЛОБАЛЬНА ЛОГІКА ДОДАТКУ -->
     <script>
         window.appSchType = 'class';
         window.appSchValue = '';
@@ -1494,6 +1233,12 @@
                 const isGuest = sessionStorage.getItem('appIsGuest') === 'true';
                 const overlay = document.getElementById('auth-overlay');
                 
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('t')) {
+                    if(overlay) overlay.style.display = 'none';
+                    return; 
+                }
+
                 if (savedUser) {
                     window.currentUser = JSON.parse(savedUser);
                     if(overlay) overlay.style.display = 'none';
@@ -1687,29 +1432,6 @@
             return parsedHtml;
         };
 
-        window.switchTab = function(targetId, btnId) {
-            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            
-            if (btnId) {
-                const item = document.getElementById(btnId);
-                if (item) item.classList.add('active');
-            } else {
-                const item = document.querySelector(`[data-target="${targetId}"]`);
-                if (item) item.classList.add('active');
-            }
-            
-            const target = document.getElementById(targetId);
-            if (target) target.classList.add('active');
-
-            const modeTrigger = document.getElementById('mode-trigger');
-            if (modeTrigger) modeTrigger.classList.remove('show-modes');
-            
-            const bottomNav = document.getElementById('bottom-nav-container');
-            if (bottomNav) bottomNav.classList.remove('open');
-            document.body.classList.add('nav-closed');
-        };
-
         window.openAIChat = function() {
             window.switchTab('tab-chat', 'nav-chat-btn');
             if (window.currentMode === 'admin_chat') {
@@ -1737,8 +1459,6 @@
                 window.addMessageToDOM('ai', "Привіт! 🎉 Я ведучий вікторини! З якого предмета чи на яку тему хочеш перевірити свої знання? (Наприклад: Історія, Географія, Біологія, Ігри, Кіно)");
             } else if (modeName === 'rpg') {
                 window.addMessageToDOM('ai', "Вітаю, мандрівнику! 🐉 Я твій Майстер Гри. Перед тим як ми почнемо нашу подорож, розкажи мені про свого персонажа: яку расу (людина, ельф, гном тощо), клас (воїн, маг, лучник) та ім'я ти обираєш?");
-            } else {
-                if (typeof window.hideQuizTimer === 'function') window.hideQuizTimer();
             }
 
             window.saveMemory();
@@ -1770,7 +1490,6 @@
             window.chatHistory = [];
             if (window.currentMode !== 'admin_chat') window.currentMode = 'default';
             window.removeAttachedImage();
-            if (typeof window.hideQuizTimer === 'function') window.hideQuizTimer();
             window.saveMemory();
             window.renderCurrentChat();
             const modal = document.getElementById('modal-overlay');
@@ -1883,15 +1602,6 @@
                 window.saveMemory();
             }
 
-            if (role === 'ai' && typeof window.checkQuizScore === 'function') {
-                window.checkQuizScore(text);
-                if (window.currentMode === 'quiz' && !isHistoryLoad && typeof window.startQuizTimer === 'function') {
-                    const timeMatch = text.match(/\[ЧАС:\s*(\d+)\]/i);
-                    if (timeMatch) window.startQuizTimer(parseInt(timeMatch[1]));
-                    else if (text.includes('?') || text.toLowerCase().includes('запитання')) window.startQuizTimer(30); 
-                }
-            }
-
             setTimeout(() => {
                 if (window.MathJax && window.MathJax.typesetPromise) {
                     MathJax.typesetPromise([bubble]).catch((err) => console.log('MathJax error: ', err));
@@ -1985,28 +1695,6 @@
             window.pendingAuthData = null;
         };
 
-        window.continueAsGuest = function() {
-            const overlay = document.getElementById('auth-overlay');
-            if (overlay) overlay.style.display = 'none';
-            window.currentUser = null;
-            sessionStorage.setItem('appIsGuest', 'true');
-            if (typeof window.applyAdminRights === 'function') window.applyAdminRights();
-            window.loadMemory();
-            if (typeof window.setupUserCommandListener === 'function') window.setupUserCommandListener();
-        };
-
-        window.sendRealEmail = async function(email, code) {
-            try {
-                const SCRIPT_URL = window.APP_CONFIG?.GOOGLE_SCRIPT_URL || "https://script.google.com/macros/s/AKfycbwcWbqYhvQ94w7qxy3qgM3x6hm3fC-u4dp48dznpneg_GAkCavPo4o0lykOIhb9fzpy/exec";
-                if (SCRIPT_URL && SCRIPT_URL !== 'YOUR_GOOGLE_SCRIPT_URL_HERE') {
-                    await fetch(SCRIPT_URL, {
-                        method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ email: email, code: code })
-                    });
-                }
-                return true;
-            } catch(e) { return false; }
-        };
-
         window.askAI = async function(query, imageBase64) {
             let qLower = (query || "").toLowerCase().replace(/[?.,!]/g, '').trim();
 
@@ -2043,7 +1731,7 @@
                 'math': "Ти вчитель математики ліцею №8. Допомагай з алгеброю та геометрією. Формули пиши в $...$.", 
                 'ukr': "Ти вчитель української мови та літератури ліцею №8.", 
                 'translate': "Ти професійний перекладач.",
-                'quiz': `Ти — харизматичний ведучий вікторини для учня ${userClass}. СУВОРІ ПРАВИЛА:\n1. Задавай ТІЛЬКИ ОДНЕ питання за раз.\n2. Самостійно оціни складність і визнач чесний час на відповідь. В КІНЦІ повідомлення ОБОВ'ЯЗКОВО додай тег [ЧАС: X] (де X - секунди).\n3. Давай 4 варіанти відповіді (А, Б, В, Г).\n4. НІКОЛИ не пиши правильну відповідь одразу! ЧЕКАЙ відповіді.\n5. Назви поточний рахунок (старт з 0 балів) і задай наступне.`,
+                'quiz': `Ти — харизматичний ведучий вікторини для учня ${userClass}. СУВОРІ ПРАВИЛА:\n1. Задавай ТІЛЬКИ ОДНЕ питання за раз.\n2. Самостійно оціни складність і визнач чесний час на відповідь.\n3. Давай 4 варіанти відповіді (А, Б, В, Г).\n4. НІКОЛИ не пиши правильну відповідь одразу! ЧЕКАЙ відповіді.\n5. Назви поточний рахунок (старт з 0 балів) і задай наступне.`,
                 'rpg': "Ти — Майстер Гри (Game Master) у текстовій RPG. ПРАВИЛА:\n1. На початку гри спитай расу, клас, ім'я.\n2. Починай пригоду, описуй оточення детально.\n3. В кінці КОЖНОГО свого повідомлення пропонуй 2-4 пронумеровані варіанти дій (А, Б, В, Г).\n4. Гнучко реагуй на нестандартні дії гравця.",
                 'admin_chat': "Ти адміністратор. Відповідай коротко."
             };
@@ -2232,8 +1920,6 @@
 
             if (textContent && typeof window.checkAndTrigger === 'function') { window.checkAndTrigger(textContent); }
 
-            if (typeof window.hideQuizTimer === 'function') window.hideQuizTimer();
-
             if (window.currentMode === 'admin_chat') {
                 window.addMessageToDOM('user', textContent, false, imageContent);
                 userInput.value = ''; window.removeAttachedImage(); window.autoResize(userInput);
@@ -2264,7 +1950,7 @@
             }
         };
 
-        // Запуск при завантаженні (DOM)
+        // Запуск при завантаженні
         window.addEventListener('DOMContentLoaded', () => {
             try { document.documentElement.setAttribute('data-theme', localStorage.getItem('appTheme') || 'light'); } catch(e){}
             
@@ -2291,36 +1977,20 @@
         });
     </script>
 
-    <!-- 4. FIREBASE МОДУЛЬ (Асинхронно) -->
+    <!-- FIREBASE МОДУЛЬ (Асинхронно) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, getDocs, getDoc, setDoc, doc, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // === 1. ІНІЦІАЛІЗАЦІЯ НАЛАШТУВАНЬ З CONFIG.JS ===
-        if (!window.APP_CONFIG) {
-            window.APP_CONFIG = {
-                GEMINI_API_KEYS: [], // Використовуємо ключі Gemini з .env
-                GEMINI_MODEL: "gemini-2.5-flash", 
-                ELEVENLABS_API_KEY: "",
-                GOOGLE_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwcWbqYhvQ94w7qxy3qgM3x6hm3fC-u4dp48dznpneg_GAkCavPo4o0lykOIhb9fzpy/exec"
-            };
-        }
-        if (!window.myFirebaseConfig) {
-            window.myFirebaseConfig = { apiKey: "", authDomain: "", projectId: "lyceum8-app", storageBucket: "", messagingSenderId: "", appId: "" };
-        }
-        window.firebaseAppId = window.myFirebaseConfig.projectId || "lyceum8-app";
-
-        // Firebase з'єднувачі
         window.fbSaveSession = function(sessionData) {
             if (!window.firestoreDB) return;
             const docId = `${sessionData.userEmail}_${sessionData.id}`;
             setDoc(doc(window.firestoreDB, 'artifacts', window.firebaseAppId, 'public', 'data', 'chatSessions', docId), sessionData).catch(e => console.warn(e));
         };
-        
-        // ЗБЕРЕЖЕННЯ І ЗАВАНТАЖЕННЯ ТЕСТІВ ЧЕРЕЗ FIREBASE
+
         window.fbSaveTest = async function(testId, testData) {
-            if (!window.firestoreDB) throw new Error("База даних не підключена");
+            if (!window.firestoreDB) throw new Error("БД не підключена");
             await setDoc(doc(window.firestoreDB, 'artifacts', window.firebaseAppId, 'public', 'data', 'tests', testId), testData);
         };
         
@@ -2330,235 +2000,10 @@
             return snapshot.exists() ? snapshot.data() : null;
         };
 
-        window.handleAuth = async function() {
-            const errorElement = document.getElementById('auth-error');
-            const submitButton = document.getElementById('auth-submit-btn');
-            if (errorElement) errorElement.style.display = 'none';
-            
-            if (window.appAuthMode === 'register') {
-                const fName = document.getElementById('auth-firstname').value.trim();
-                const lName = document.getElementById('auth-lastname').value.trim();
-                const uClass = document.getElementById('auth-class').value.trim();
-                const email = document.getElementById('auth-email-reg').value.trim().toLowerCase();
-                const pass = document.getElementById('auth-password-reg').value.trim();
-                
-                if (!fName || !lName || !uClass || !email || !pass) {
-                    if (errorElement) { errorElement.innerText = "Заповніть всі поля!"; errorElement.style.display = 'block'; }
-                    return;
-                }
-                
-                if (submitButton) { submitButton.innerText = 'Перевірка...'; submitButton.disabled = true; }
-                
-                if (!window.firebaseInitialized && window.firestoreDB) {
-                    for(let i = 0; i < 30; i++) {
-                        if (window.firebaseInitialized) break;
-                        await new Promise(r => setTimeout(r, 100));
-                    }
-                }
-                
-                if (!window.appUsers[email] && window.firestoreDB) {
-                    try {
-                        const userDoc = await getDoc(doc(window.firestoreDB, 'artifacts', window.firebaseAppId, 'public', 'data', 'appUsers', email));
-                        if (userDoc.exists()) window.appUsers[email] = userDoc.data();
-                    } catch(e) { console.error("Помилка БД:", e); }
-                }
-                
-                if (window.appUsers[email]) {
-                    if (submitButton) { submitButton.innerText = 'Зареєструватися'; submitButton.disabled = false; }
-                    if (errorElement) { errorElement.innerText = "Ця пошта вже зареєстрована!"; errorElement.style.display = 'block'; }
-                } else {
-                    window.expectedVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-                    window.pendingAuthData = {
-                        type: 'register', firstName: fName, lastName: lName, userClass: uClass, email: email, password: pass, registeredAt: new Date().toLocaleString(), permissions: {}
-                    };
-                    window.sendRealEmail(email, window.expectedVerificationCode);
-                    if (submitButton) { submitButton.innerText = 'Зареєструватися'; submitButton.disabled = false; }
-                    window.showVerificationStep(email);
-                }
-            } else {
-                const email = document.getElementById('auth-email-login').value.trim().toLowerCase();
-                const pass = document.getElementById('auth-password-login').value.trim();
-                
-                if (!email || !pass) {
-                    if (errorElement) { errorElement.innerText = "Введіть пошту та пароль!"; errorElement.style.display = 'block'; }
-                    return;
-                }
-                
-                if (submitButton) { submitButton.innerText = 'Вхід...'; submitButton.disabled = true; }
-                
-                if (!window.firebaseInitialized && window.firestoreDB) {
-                    for(let i = 0; i < 30; i++) {
-                        if (window.firebaseInitialized) break;
-                        await new Promise(r => setTimeout(r, 100));
-                    }
-                }
-                
-                let foundUser = window.appUsers[email] || null;
-                
-                if (!foundUser && window.firestoreDB) {
-                    try {
-                        const userDoc = await getDoc(doc(window.firestoreDB, 'artifacts', window.firebaseAppId, 'public', 'data', 'appUsers', email));
-                        if (userDoc.exists()) {
-                            foundUser = userDoc.data();
-                            window.appUsers[email] = foundUser;
-                            window.safeSetLocal('appUsers', JSON.stringify(window.appUsers));
-                        } else {
-                            const usersRef = collection(window.firestoreDB, 'artifacts', window.firebaseAppId, 'public', 'data', 'appUsers');
-                            const snap = await getDocs(usersRef);
-                            snap.forEach(d => {
-                                window.appUsers[d.id] = d.data();
-                                if (d.data().email && d.data().email.toLowerCase() === email) {
-                                    foundUser = d.data();
-                                }
-                            });
-                            window.safeSetLocal('appUsers', JSON.stringify(window.appUsers));
-                        }
-                    } catch(e) { console.error("Помилка БД:", e); }
-                }
-                
-                if (foundUser && foundUser.password === pass) {
-                    window.expectedVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-                    window.pendingAuthData = { type: 'login', userData: foundUser };
-                    window.sendRealEmail(email, window.expectedVerificationCode);
-                    if (submitButton) { submitButton.innerText = 'Увійти'; submitButton.disabled = false; }
-                    window.showVerificationStep(email);
-                } else {
-                    if (submitButton) { submitButton.innerText = 'Увійти'; submitButton.disabled = false; }
-                    if (errorElement) { 
-                        errorElement.innerText = foundUser ? "Невірний пароль!" : "Акаунт не знайдено!"; 
-                        errorElement.style.display = 'block'; 
-                    }
-                }
-            }
-        };
-
-        window.verifyAuthCode = function() {
-            const authCodeInput = document.getElementById('auth-code');
-            if (!authCodeInput) return;
-            const enteredCode = authCodeInput.value.trim();
-            if (enteredCode === window.expectedVerificationCode) {
-                if (window.pendingAuthData.type === 'register') {
-                    window.appUsers[window.pendingAuthData.email] = window.pendingAuthData;
-                    window.safeSetLocal('appUsers', JSON.stringify(window.appUsers));
-                    if (window.firestoreDB) {
-                        const ref = doc(window.firestoreDB, 'artifacts', window.firebaseAppId, 'public', 'data', 'appUsers', window.pendingAuthData.email);
-                        setDoc(ref, window.pendingAuthData).catch(e => console.error(e));
-                    }
-                    window.loginUser(window.pendingAuthData);
-                } else { window.loginUser(window.pendingAuthData.userData); }
-                window.cancelVerification();
-            } else {
-                const errElement = document.getElementById('auth-error');
-                if (errElement) { errElement.innerText = "Невірний код підтвердження!"; errElement.style.display = 'block'; }
-            }
-        };
-
-        window.loginUser = function(userData) {
-            window.currentUser = userData;
-            window.safeSetLocal('appCurrentUser', JSON.stringify(userData));
-            const overlay = document.getElementById('auth-overlay');
-            if (overlay) overlay.style.display = 'none';
-            if (typeof window.applyAdminRights === 'function') window.applyAdminRights();
-            if (typeof window.loadMemory === 'function') window.loadMemory();
-            if (typeof window.setupUserCommandListener === 'function') window.setupUserCommandListener();
-            if (window.firestoreDB) {
-                const ref = doc(window.firestoreDB, 'artifacts', window.firebaseAppId, 'public', 'data', 'appUsers', userData.email);
-                setDoc(ref, userData).catch(e => console.error(e));
-            }
-        };
-
-        window.applyAdminRights = function() {
-            if (typeof window.applyUserPermissions === 'function') window.applyUserPermissions();
-            
-            const userInfoDisplay = document.getElementById('user-info-display');
-            const authActionBtn = document.getElementById('auth-action-btn');
-            
-            if (window.currentUser) {
-                if (userInfoDisplay) {
-                    userInfoDisplay.innerText = `${window.currentUser.firstName} ${window.currentUser.lastName} (${window.currentUser.userClass})`;
-                }
-                if (authActionBtn) {
-                    authActionBtn.innerText = 'Вийти з акаунту';
-                    authActionBtn.onclick = window.logoutApp;
-                }
-            } else {
-                if (userInfoDisplay) {
-                    userInfoDisplay.innerText = `Гостьовий акаунт`;
-                }
-                if (authActionBtn) {
-                    authActionBtn.innerText = 'Увійти або Зареєструватися';
-                    authActionBtn.onclick = () => { 
-                        const overlay = document.getElementById('auth-overlay');
-                        if (overlay) overlay.style.display = 'flex'; 
-                    };
-                }
-            }
-            
-            const canAdmin = typeof window.hasPermission === 'function' ? window.hasPermission('adminPanel') : false;
-            const canDialog = typeof window.hasPermission === 'function' ? window.hasPermission('viewDialogs') : false;
-            
-            const navAdmin = document.getElementById('nav-admin');
-            const navAdminMsg = document.getElementById('nav-admin-messages');
-            
-            if (navAdmin) navAdmin.style.display = canAdmin ? 'flex' : 'none';
-            if (navAdminMsg) navAdminMsg.style.display = canDialog ? 'flex' : 'none';
-
-            const adminBgsGroup = document.getElementById('admin-bgs-group');
-            if (adminBgsGroup) adminBgsGroup.style.display = canAdmin ? 'block' : 'none';
-            
-            if (canAdmin || canDialog) {
-                let allLocalSessions = [];
-                for (let i = 0; i < localStorage.length; i++) {
-                    const keyName = localStorage.key(i);
-                    if (keyName && keyName.startsWith('appChatSessions_')) {
-                        try {
-                            const parsed = JSON.parse(localStorage.getItem(keyName));
-                            if (Array.isArray(parsed)) allLocalSessions.push(...parsed);
-                        } catch(e) {}
-                    }
-                }
-                window.allChatSessions = allLocalSessions;
-                
-                if (window.firestoreDB) {
-                    if (!window.unsubscribeUsers) {
-                        const usersRef = collection(window.firestoreDB, 'artifacts', window.firebaseAppId, 'public', 'data', 'appUsers');
-                        window.unsubscribeUsers = onSnapshot(usersRef, (snapshot) => {
-                            const cloudUsers = {};
-                            snapshot.forEach(d => { cloudUsers[d.id] = d.data(); });
-                            window.appUsers = cloudUsers;
-                            window.safeSetLocal('appUsers', JSON.stringify(cloudUsers));
-                            if (typeof window.updateAdminDashboard === 'function') window.updateAdminDashboard();
-                            if (typeof window.renderAdminDialogsList === 'function') window.renderAdminDialogsList();
-                        });
-                    }
-                    if (!window.unsubscribeChats) {
-                        const sessionsRef = collection(window.firestoreDB, 'artifacts', window.firebaseAppId, 'public', 'data', 'chatSessions');
-                        window.unsubscribeChats = onSnapshot(sessionsRef, (snapshot) => {
-                            const sessionMap = new Map();
-                            window.allChatSessions.forEach(x => sessionMap.set(x.id, x));
-                            snapshot.forEach(d => sessionMap.set(d.id, d.data()));
-                            window.allChatSessions = Array.from(sessionMap.values());
-                            
-                            if (typeof window.updateAdminDashboard === 'function') window.updateAdminDashboard();
-                            if (typeof window.renderAdminDialogsList === 'function') window.renderAdminDialogsList();
-                            
-                            const viewerTitle = document.getElementById('admin-viewer-title');
-                            if (viewerTitle && document.getElementById('admin-chat-viewer').style.display === 'block') {
-                                if (typeof window.viewUserChats === 'function') window.viewUserChats(viewerTitle.innerText.replace('Історія: ', '').trim());
-                            }
-                            if (document.getElementById('admin-dialog-room').style.display === 'flex') {
-                                if (typeof window.renderAdminDialogMessages === 'function') window.renderAdminDialogMessages();
-                            }
-                        });
-                    }
-                } else {
-                    if (typeof window.updateAdminDashboard === 'function') window.updateAdminDashboard();
-                    if (typeof window.renderAdminDialogsList === 'function') window.renderAdminDialogsList();
-                }
-            } else {
-                if (window.unsubscribeUsers) { window.unsubscribeUsers(); window.unsubscribeUsers = null; }
-                if (window.unsubscribeChats) { window.unsubscribeChats(); window.unsubscribeChats = null; }
-            }
+        window.fbSaveTestResult = async function(testId, resultData) {
+            if (!window.firestoreDB) return;
+            const studentId = 'student_' + Date.now();
+            await setDoc(doc(window.firestoreDB, 'artifacts', window.firebaseAppId, 'public', 'data', `test_results_${testId}`, studentId), resultData);
         };
 
         window.updateAdminDashboard = function() {
@@ -2598,15 +2043,13 @@
                 li.style.transition = '0.2s';
                 
                 const isSuperAdminUser = window.isSuperAdmin();
-                const canDelete = typeof window.hasPermission === 'function' ? window.hasPermission('deleteUsers') : false;
+                const canDelete = window.hasPermission('deleteUsers');
                 
                 const settingsBtnHtml = (isSuperAdminUser && !isGuest) ? 
-                    `<button onclick="event.stopPropagation(); window.openPermissionsModal('${email}')" style="background: rgba(59,130,246,0.1); color: var(--primary); border: 1px solid rgba(59,130,246,0.2); border-radius: 8px; padding: 8px 12px; cursor: pointer; font-size: 12px; font-weight: 600; box-shadow: var(--shadow-sm); margin-bottom: 5px;">⚙️ Доступ</button>` 
-                    : '';
+                    `<button onclick="event.stopPropagation(); window.openPermissionsModal('${email}')" style="background: rgba(59,130,246,0.1); color: var(--primary); border: 1px solid rgba(59,130,246,0.2); border-radius: 8px; padding: 8px 12px; cursor: pointer; font-size: 12px; font-weight: 600; box-shadow: var(--shadow-sm); margin-bottom: 5px;">⚙️ Доступ</button>` : '';
                 
                 const deleteBtnHtml = canDelete ? 
-                    `<button onclick="event.stopPropagation(); window.confirmDeleteUser('${email}')" style="background: var(--danger); color: white; border: none; border-radius: 8px; padding: 8px 12px; cursor: pointer; font-size: 12px; font-weight: 600; box-shadow: var(--shadow-sm); width: 100%;">Видалити</button>`
-                    : '';
+                    `<button onclick="event.stopPropagation(); window.confirmDeleteUser('${email}')" style="background: var(--danger); color: white; border: none; border-radius: 8px; padding: 8px 12px; cursor: pointer; font-size: 12px; font-weight: 600; box-shadow: var(--shadow-sm); width: 100%;">Видалити</button>` : '';
 
                 li.innerHTML = `
                     <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
@@ -2854,13 +2297,8 @@
             });
         };
 
-        // Запуск при завантаженні для перевірки посилання з тестом
-        const urlParams = new URLSearchParams(window.location.search);
-        const urlTestId = urlParams.get('testId');
-
-        // === 2. ІНІЦІАЛІЗАЦІЯ FIREBASE ===
         try {
-            if (window.myFirebaseConfig && window.myFirebaseConfig.apiKey) {
+            if (window.myFirebaseConfig && window.myFirebaseConfig.projectId) {
                 const app = initializeApp(window.myFirebaseConfig);
                 window.firebaseAuth = getAuth(app); 
                 window.firestoreDB = getFirestore(app);
@@ -2868,34 +2306,32 @@
                 onAuthStateChanged(window.firebaseAuth, async (user) => {
                     if (user) { 
                         window.firebaseInitialized = true; 
-                        if (typeof window.applyAdminRights === 'function') window.applyAdminRights(); 
-                        if (typeof window.setupUserCommandListener === 'function') window.setupUserCommandListener(); 
                         
-                        // Якщо є тест в URL - завантажуємо його
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const urlTestId = urlParams.get('t');
+                        
                         if (urlTestId) {
-                            window.switchTab('tab-tests', 'nav-tests-btn');
-                            document.getElementById('test-render-container').innerHTML = '<div class="sch-empty" style="color: var(--primary);">⏳ Завантаження тесту...</div>';
+                            const authOverlay = document.getElementById('auth-overlay');
+                            if(authOverlay) authOverlay.style.display = 'none';
+                            
                             try {
                                 const testData = await window.fbLoadTest(urlTestId);
                                 if (testData) {
-                                    window.currentTestData = testData;
-                                    window.renderActiveTest(testData);
+                                    window.openTestRunner(urlTestId, testData);
                                 } else {
-                                    document.getElementById('test-render-container').innerHTML = '<div class="sch-empty" style="color: var(--danger);">❌ Тест не знайдено або він був видалений.</div>';
+                                    alert('Тест не знайдено!');
                                 }
-                            } catch(e) {
-                                document.getElementById('test-render-container').innerHTML = '<div class="sch-empty" style="color: var(--danger);">Помилка завантаження тесту.</div>';
-                            }
+                            } catch(e) { alert('Помилка завантаження тесту.'); }
+                        } else {
+                            if (typeof window.applyAdminRights === 'function') window.applyAdminRights(); 
+                            if (typeof window.setupUserCommandListener === 'function') window.setupUserCommandListener(); 
                         }
                     }
                 });
-                signInAnonymously(window.firebaseAuth).catch(err => { 
-                    console.warn("Firebase Auth Error:", err); 
-                });
+                signInAnonymously(window.firebaseAuth).catch(e => {});
             }
-        } catch (error) { 
-            console.warn("Помилка ініціалізації Firebase", error); 
-        }
+        } catch (e) {}
+
     </script>
 </body>
 </html>
